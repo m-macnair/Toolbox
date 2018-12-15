@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+
 =head1 Overview
 	Removes all the junk/temp files created by kwrite & perltidy
 =cut
+
 main();
 
 sub main {
