@@ -1,0 +1,11 @@
+This isn't so much a style guide as a reminder as to what I want to do :D
+
+Variable names
+	$p = $params - something specific to an operation
+	$c = $conf (or Catalyst's $c which is the same thing really) - configuration or configuration overrides 
+	my ($always,$always,%$sometimes) = @_; - Prone to backfire when a sub balloons, but href all day every day gets tiring. Exception is if there are more than 3 mandatory params in which case, ($self,$href)
+
+DB design
+	items
+	item_properties.item_id
+	item_property_nested.item_property_id
