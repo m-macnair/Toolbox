@@ -1,1 +1,1 @@
-find ./ -name *.p[ml] -exec perltidy -b {} \;
+find ./ -name "*.p[ml]" -exec perl -cw {} \; -exec perltidy -b {} \;
