@@ -1,11 +1,18 @@
 This isn't so much a style guide as a reminder as to what I want to do :D
-
-Variable names
-	$p = $params - something specific to an operation
-	$c = $conf (or Catalyst's $c which is the same thing really) - configuration or configuration overrides 
-	my ($always,$always,%$sometimes) = @_; - Prone to backfire when a sub balloons, but href all day every day gets tiring. Exception is if there are more than 3 mandatory params in which case, ($self,$href)
-
-DB design
-	items
-	item_properties.item_id
-	item_property_nested.item_property_id
+Perl
+	Variable names
+		$p = $params - something specific to an operation
+		$c = $conf (or Catalyst's $c which is the same thing really) - configuration or configuration overrides 
+		On principle, up to two mandatory parameters and a href of optionals, or one href of named parameters
+	Misc
+		snake_case on principle 
+		<something> unless test(); for single actions 
+DB
+	design
+		items
+		item_properties.item_id
+		item_property_nested.item_property_id
+		
+		all ints are big ints unless it's absolutely certain they aren't
+		currency is stored in the smallest denomination of the currency, as integer, and big int
+		When possible, strings are split out into their own table

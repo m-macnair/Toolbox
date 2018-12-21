@@ -6,7 +6,7 @@
 -t # tabs used for indents
 
 -enc=utf8
--bt=0 # use maximum space between a key and braces 
+-bt=2 # use no space between a key and braces 
 
 --indent-block-comments
 -nolc # keep indentation for comments longer than line limit (even though there isn't one)
