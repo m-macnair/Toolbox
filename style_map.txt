@@ -4,6 +4,17 @@ Perl
 		$p = $params - something specific to an operation
 		$c = $conf (or Catalyst's $c which is the same thing really) - configuration or configuration overrides 
 		On principle, up to two mandatory parameters and a href of optionals, or one href of named parameters
+	Returns
+		When A sub only does one thing and dies other wise
+			return 1 value
+		Otherwise
+			return a href with one of 
+				{ pass => 1 } - when 'it worked' is all the sub does
+				{ pass => 'key' , key => $processed value } - when multiple possible return conditions exist, to indicate which one applied
+				{ fail => $why }
+	Sigils
+		% and @ discouraged except when it's 100% certain that they'll never leave a given sub. References at all other times
+
 	Misc
 		snake_case on principle 
 		<something> unless test(); for single actions 

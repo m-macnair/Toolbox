@@ -6,6 +6,7 @@ alias ctidy.sh="sh $Toolbox/ctidy.sh"
 alias ttidy.sh="sh $Toolbox/ttidy.sh"
 #for when inside a Module::Starter based module's /script directory. Eventually should look for ./lib further up too
 alias hperl="perl -I../lib/ "
+alias perll="perl -I./lib/ "
 alias mstarter='module-starter --author="mmacnair" --email=mmacnair@cpan.org --license=bsd '
 alias rprove="prove -l -r "
 alias gitaddperl="find ./ -type f -name \"*.p[ml]\" -exec git add {} \;"

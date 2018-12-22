@@ -1,8 +1,7 @@
 package Some::Module;
-use strict; 
+use strict;
 use 5.006;
 use warnings;
-
 
 =head1 NAME
 	~
@@ -11,7 +10,6 @@ use warnings;
 =cut
 
 our $VERSION = '0.01';
-
 
 =head1 SYNOPSIS
 	TODO
