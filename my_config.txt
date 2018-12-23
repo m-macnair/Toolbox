@@ -1,0 +1,56 @@
+How I (want to) do things:
+
+Principles
+	Perl First, C++ When Performance Matters, PHP when $it doesn't matter, Python when there's no alternative
+	ORM should be considered at the overarching layer, *not* for subsystems. If ORM seems to be a good idea for a subsystem, it's *probably* not been broken down far enough
+	snake_case on principle
+	validation/mangling occurs at the public method level, so that private methods can just Do The Thing
+
+Layout - Yet to actually do this
+	Init
+	Critical Path
+		Public
+		Private
+	Facilitators
+		Manglers
+	Utility
+		Generic Functions
+		Refactor Candidates
+	Wrappers
+		Public
+			Lazy
+			For Children
+		Private 
+	
+Perl
+	Variable names
+		$p = $params - something specific to an operation
+		$c = $conf (or Catalyst's $c which is the same thing really) - configuration or configuration overrides 
+		On principle, up to two mandatory parameters and a href of optionals, or one href of named parameters
+	Returns
+		When a sub only does one thing and dies other wise
+			return 1 value
+		Otherwise
+			return a href with one of 
+				{ pass => $always_truthy } - when 'it worked' is all the sub does
+				{ pass => 'some_key' , some_key => $may_be_falsey } - when multiple possible return conditions exist, to indicate which one applied
+				{ pass => 'some_key' , some_key => $may_be_falsey , any => 'other', value =>'produced' }
+				{ fail => $why }
+	Sigils
+		% and @ discouraged except when it's 100% certain that they'll never leave a given sub. References at all other times. Helps to indicate 'this value only matters here' vs 'this value is sent/came from elsewhere'
+	Tests
+		die 'not implemented' to be returned for parent class methods that should be overwritten, dir 'Not Yet Implemented' for methods that are unique
+	Misc
+		<something> unless test(); for single actions 
+DB
+	design
+		items
+		item_properties.item_id
+		item_property_nested.item_property_id
+
+		all ints are big ints unless it's absolutely certain they aren't
+		currency is stored in the smallest denomination of the currency, as integer, and big int
+		When possible, strings are split out into their own table
+
+	names
+		table names that must conceptually start with a number always start with an underscore, for Dat Portability in sqlite 
