@@ -11,3 +11,4 @@ FM
 	Start :|
 Misc
 	get kwrite config normalised
+	find standard perl module for CLI work
