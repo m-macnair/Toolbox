@@ -4,29 +4,30 @@ Principles
 	Perl First, C++ When Performance Matters, PHP when $it doesn't matter, Python when there's no alternative
 	ORM should be considered at the overarching layer, *not* for subsystems. If ORM seems to be a good idea for a subsystem, it's *probably* not been broken down far enough
 	snake_case on principle
+	`# TODO `(or equivalent comment marker) as the first part of a line or the first line in a todo comment
 	validation/mangling occurs at the public method level, so that private methods can just Do The Thing
 
 Layout - Yet to actually do this
-	Init
+
+
 	Critical Path
-		Public
-		Private
+		Init
+		Public Wrappers
+
 	Facilitators
 		Manglers
 	Utility
 		Generic Functions
 		Refactor Candidates
-	Wrappers
-		Public
-			Lazy
-			For Children
-		Private 
-	
+	Private Wrappers
+		Lazy
+		For Children
+
 Perl
-	Variable names
+	TitleCase when referring to another module or library - and the library itself is title case
 		$p = $params - something specific to an operation
 		$c = $conf (or Catalyst's $c which is the same thing really) - configuration or configuration overrides 
-		On principle, up to two mandatory parameters and a href of optionals, or one href of named parameters
+	On principle, up to two mandatory parameters and a href of optionals, or one href of named parameters if there's more than 2 mandatory
 	Returns
 		When a sub only does one thing and dies other wise
 			return 1 value
@@ -42,6 +43,7 @@ Perl
 		die 'not implemented' to be returned for parent class methods that should be overwritten, dir 'Not Yet Implemented' for methods that are unique
 	Misc
 		<something> unless test(); for single actions 
+	
 DB
 	design
 		items

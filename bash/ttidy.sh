@@ -1,0 +1,1 @@
+find ./ -type f -name "*.t" -exec perltidy -b {} \;

@@ -5,10 +5,18 @@ GSASE
 	Redo GSA with SubSystem namespace
 		Figure out catalyst naming convention to use for *::Catalyst::ASE & GSA
 	add ::Lambda to CachedDB
+	Learn & Introduce proper plugin facilities
 SE
 	Start
 FM
 	Start :|
+Mathhammer
+	Finish in Perl
+	Implement in C++
+	Python?
 Misc
-	get kwrite config normalised
-	find standard perl module for CLI work
+	Get kwrite config normalised
+	Find standard perl module for CLI work 
+	Cross System Deduplicator in Wx
+	Pi For Dev
+	
