@@ -47,8 +47,7 @@ Perl
 DB
 	design
 		items
-		item_properties.item_id
-		item_property_nested.item_property_id
+		properties_to_item.item_id
 
 		all ints are big ints unless it's absolutely certain they aren't
 		currency is stored in the smallest denomination of the currency, as integer, and big int
