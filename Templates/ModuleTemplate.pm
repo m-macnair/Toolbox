@@ -1,4 +1,5 @@
 use strict; # applies to all packages defined in the file
+
 package Some::Module;
 use 5.006;
 use warnings;
@@ -12,8 +13,8 @@ use warnings;
 	0.00 - <date unless same as above>
 		<actions>
 =cut
-our $VERSION = '0.01';
 
+our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 	TODO
@@ -24,6 +25,7 @@ our $VERSION = '0.01';
 =head2 SETUP
 =head3 new
 =cut
+
 sub new {
 	my ( $class, $conf ) = @_;
 	my $self = {};
@@ -36,6 +38,7 @@ sub new {
 =head3 _init
 	Separate class instantiation and configuration for when that's a good idea (i.e. it's overwritten in child classes)
 =cut
+
 sub _init {
 	my ( $self, $conf ) = @_;
 	return {pass => 1};
@@ -47,23 +50,25 @@ sub _init {
 	create, config, return
 =cut
 
-
 sub do_something {
 	my ( $self, $p ) = @_;
-	$self->validate_some_value($p, 'the_thing');
-	$self->_do_something($p);
+	$self->validate_some_value( $p, 'the_thing' );
+	$self->_do_something( $p );
 }
 
 =head2 SECONDARY SUBS
 	Actions used by one or more PRIMARY SUBS that aren't wrappers or accessors
 =cut
+
 sub validate_some_value {
-	my ( $self, $p , $value) = @_;
-	die unless($p->{$value});
+	my ( $self, $p, $value ) = @_;
+	die unless ( $p->{$value} );
 }
+
 =head2 ACCESSORS
 =head3 getsomething
 =cut
+
 sub getsomething {
 
 }
@@ -71,7 +76,6 @@ sub getsomething {
 =head2 WRAPPERS
 =head3 external_function
 =cut
-
 
 =head1 AUTHOR
 	mmacnair, C<< <mmacnair at cpan.org> >>

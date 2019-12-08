@@ -33,8 +33,8 @@ sub main {
 			sqlite_see_if_its_a_number => 1,
 		}
 	) or die $!;
-	my $counter = 0 ;
-	my $limit = 100;
+	my $counter = 0;
+	my $limit   = 100;
 	my $persist = {dbh => $osql_h};
 	for ( split( ',', $c->{except} ) ) {
 		$persist->{skips}->{$_} = 1;
@@ -55,8 +55,8 @@ sub main {
 			my ( $sth, $keys ) = get_insert_sth( $persist, $table_row->{name}, $data_row );
 			my @values = @{$data_row}{@{$keys}};
 
-			$sth->execute(@values);
-			if($counter >= $limit){
+			$sth->execute( @values );
+			if ( $counter >= $limit ) {
 				$counter = 0;
 				$osql_h->commit();
 			}
@@ -70,15 +70,17 @@ sub main {
 
 sub get_insert_sth {
 	my ( $persist, $name, $row ) = @_;
-	
+
 	$persist->{$name} ||= {};
 	unless ( $persist->{$name}->{sth} ) {
-# 		warn Dumper( $row );
+
+		# 		warn Dumper( $row );
 		my @keys      = sort( keys( %{$row} ) );
 		my $keystring = join( ",", @keys );
-		my $phstring  = '' . ('?,' x @keys);
-		$phstring = substr( $phstring,0, -1 );
-# 		warn $phstring;
+		my $phstring  = '' . ( '?,' x @keys );
+		$phstring = substr( $phstring, 0, -1 );
+
+		# 		warn $phstring;
 		my $qstring = "insert into $name ( $keystring ) values ($phstring)";
 
 		$persist->{$name}->{sth} = $persist->{dbh}->prepare( $qstring );
