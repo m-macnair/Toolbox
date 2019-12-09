@@ -6,9 +6,9 @@ use Toolbox::ExcelWriterSugar::Worksheet;
 
 require Excel::Writer::XLSX;
 ACCESSORS: {
-	has ewx           => ( is => 'rw', );
-	has ofn           => ( is => 'rw', );
-	has worksheet_map => ( is => 'rw', default => sub { return {} } );
+	has ewx => ( is => 'rw', );
+	has ofn => ( is => 'rw', );
+
 }
 
 sub BUILD {
@@ -26,26 +26,27 @@ sub BUILD {
 	}
 }
 
+# TODO find a way to store objects persitently without breaking the output
 sub worksheet {
 	my ( $self, $name, $existing ) = @_;
-	$name ||= 'default';
-	my $return;
-	unless ( $return = $self->worksheet_map->{$name} ) {
-		$return = Toolbox::ExcelWriterSugar::Worksheet->new(
-			{
-				ewx => $self->ewx(),
-				cws => $existing,
-			}
-		);
-		$self->worksheet_map->{$name} = $return;
-	}
+
+	my $return = Toolbox::ExcelWriterSugar::Worksheet->new(
+		{
+			ews => $self,
+			cws => $existing,
+		}
+	);
+
 	return $return; #return!
 
 }
 
 sub DEMOLISH {
 	my ( $self, $in_global_destruction ) = @_;
-	$self->ewx->close();
+	if ( my $ewx = $self->ewx ) {
+		$ewx->close();
+	}
+
 }
 
 1;
