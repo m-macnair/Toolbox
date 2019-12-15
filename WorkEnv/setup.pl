@@ -1,30 +1,48 @@
 use strict;
 use warnings;
+use Cwd;
+use File::Spec;
+use File::Basename;
 main();
 sub main {
 
-	require Cwd;
 	my $thisfile = Cwd::abs_path( __FILE__ );
-	require File::Spec;
 	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $thisfile );
-
+	my $tbdir = Cwd::abs_path(dirname($thisdir));
 	BASH: {
-		my $in = inrc( 'Toolbox/WorkEnv/bash_source.sh' );
+		
+		my $in = inrc( 'Toolbox/WorkEnv/Bash/bash_source.sh' );
 		
 		unless ($in ) {
 			
-			my $cmd = qq|echo "source $thisdir/bash_source.sh" >> "$ENV{HOME}/.bashrc"|;
+			my $cmd = qq|echo "source $thisdir/Bash/bash_source.sh" >> "$ENV{HOME}/.bashrc"|;
 
 			system($cmd);
 		}
 
 		# Set up some environment variables
 		BASHSOURCE: {
-			`echo 'export PATH="\$PATH:$thisdir/Path"' > $thisdir/bash_source.sh`;
 
+			`echo 'export TOOLBOXDIR="$tbdir"' > $thisdir/Bash/bash_source.sh`;
+			`echo 'export PATH="\$PATH:$thisdir/PathScripts"' >> $thisdir/Bash/bash_source.sh`;
+
+			`cat $thisdir/Bash/bash_source_baseline.txt >> $thisdir/Bash/bash_source.sh`;
 			# TODO moar
-			my $cat = "$thisdir/bash_source_baseline.txt >> $thisdir/bash_source.sh";
-			`cat $cat `;
+		}
+	}
+	
+	PERL:{
+		my $pt = "$ENV{HOME}/.perltidyrc";
+		my $tpt = Cwd::abs_path("$thisdir/Perl/perltidyrc");
+		if(-l $pt){
+
+			if(readlink($pt) eq $tpt ){
+				#de nada
+			} else {
+				unlink($pt);
+				my $linked = eval { symlink($tpt,$pt); 1 };
+				die "Failed to softlink $tpt as $pt : $!" unless $linked;
+			}
 		}
 	}
 

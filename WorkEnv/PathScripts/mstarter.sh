@@ -1,0 +1,1 @@
+module-starter --author="mmacnair" --email=mmacnair@cpan.org --license=bsd
