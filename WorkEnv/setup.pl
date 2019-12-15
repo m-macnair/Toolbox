@@ -14,6 +14,16 @@ sub main {
 	my $tbdir = Cwd::abs_path( dirname( $thisdir ) );
 	BASH: {
 
+		unless ( -e "$ENV{HOME}/.bash_profile" ) {
+			`touch "$ENV{HOME}/.bash_profile"`;
+			`chmod +x  "$ENV{HOME}/.bash_profile"`;
+			`echo "#!/bin/bash" > "$ENV{HOME}/.bash_profile"`;
+		}
+		unless ( inprof( 'source ~/.bashrc' ) ) {
+			`echo "source ~/.bashrc" > "$ENV{HOME}/.bash_profile"`;
+		}
+
+		`touch "$ENV{HOME}/.bashrc"` unless -e "$ENV{HOME}/.bashrc";
 		my $in = inrc( 'Toolbox/WorkEnv/Bash/bash_source.sh' );
 
 		unless ( $in ) {
@@ -65,7 +75,12 @@ sub main {
 
 sub inrc {
 	my ( $value ) = @_;
-	`touch "$ENV{HOME}/.bashrc"`;
-	return ` grep "$value" "$ENV{HOME}/.bashrc"`;
+
+	return `grep "$value" "$ENV{HOME}/.bashrc"`;
+}
+
+sub inprof {
+	my ( $value ) = @_;
+	return `grep "$value" "$ENV{HOME}/.bash_profile"`;
 }
 

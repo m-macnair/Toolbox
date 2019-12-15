@@ -15,6 +15,7 @@ sub main {
 	my @safelist = File::Find::Rule->file()->name( "*.pm", "*.pl" )->in( $dir );
 
 	for my $path ( @safelist ) {
+
 		#news to me - perl -cw writes to stderr instead of stdout even on success
 		#I suppose it makes sense from a generic executable perspective
 		my $res = `perl $include -I lib -cw $path 2>&1`;

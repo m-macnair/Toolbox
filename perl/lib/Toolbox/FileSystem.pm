@@ -77,23 +77,22 @@ sub cpf {
 	File::Copy::cp( $source, $target ) or confess( "copy failed: $!" );
 }
 
-sub mkpath { 
-	my ($path) = @_;
+sub mkpath {
+	my ( $path ) = @_;
 	confess "Path missing" unless $path;
 	return $path if -d $path;
 	require File::Path;
 	my $errors;
-	File::Path::make_path($path,{ error => \$errors });
-	if ($errors && @{$errors}) {
+	File::Path::make_path( $path, {error => \$errors} );
+	if ( $errors && @{$errors} ) {
 		my $errstr;
-		for (@{$errors}) {
-			$errstr .= $_ . $/
+		for ( @{$errors} ) {
+			$errstr .= $_ . $/;
 		}
-		confess("[$path] creation failed : [$/$errstr]$/");
+		confess( "[$path] creation failed : [$/$errstr]$/" );
 	}
 	return $path;
-	
-	
+
 }
 
 sub _shared_fc {
@@ -129,7 +128,7 @@ sub subonfiles {
 	my @files = File::Find::Rule->file()->in( $dir );
 	my $stop;
 	for ( @files ) {
-		$stop = &$sub( abspath($_) );
+		$stop = &$sub( abspath( $_ ) );
 		last if $stop;
 	}
 }
