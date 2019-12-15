@@ -13,7 +13,7 @@ sub main {
 	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $thisfile );
 	my $tbdir = Cwd::abs_path( dirname( $thisdir ) );
 	BASH: {
-
+		next;
 		unless ( -e "$ENV{HOME}/.bash_profile" ) {
 			`touch "$ENV{HOME}/.bash_profile"`;
 			`chmod +x  "$ENV{HOME}/.bash_profile"`;
@@ -52,6 +52,7 @@ sub main {
 	PERL: {
 		my $pt  = "$ENV{HOME}/.perltidyrc";
 		my $tpt = Cwd::abs_path( "$thisdir/Perl/perltidyrc" );
+		my $dolink;
 		if ( -l $pt ) {
 
 			if ( readlink( $pt ) eq $tpt ) {
@@ -59,10 +60,21 @@ sub main {
 				#de nada
 			} else {
 				unlink( $pt );
-				my $linked = eval { symlink( $tpt, $pt ); 1 };
-				die "Failed to softlink $tpt as $pt : $!" unless $linked;
+				$dolink = 1;
+
 			}
+		} else {
+			if ( -e $pt ) {
+				my $cmd = "cp $pt $pt\_" . time;
+				`$cmd`;
+			}
+			$dolink = 1;
 		}
+		if ( $dolink ) {
+			my $linked = eval { symlink( $tpt, $pt ); 1 };
+			die "Failed to softlink $tpt as $pt : $!" unless $linked;
+		}
+
 	}
 
 	GIT: {

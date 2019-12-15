@@ -65,7 +65,7 @@ sub _vname {
 sub mvf {
 
 	my ( $source, $target ) = _shared_fc( @_ );
-	warn "[$source],[$target]";
+
 	require File::Copy;
 	File::Copy::mv( $source, $target ) or confess( "move failed: $!" );
 
