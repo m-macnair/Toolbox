@@ -15,6 +15,7 @@ our @EXPORT_OK = qw(
   mvf
   cpf
   abspath
+  mkpath
 );
 
 =head3 checkpath
@@ -66,14 +67,33 @@ sub mvf {
 	my ( $source, $target ) = _shared_fc( @_ );
 	warn "[$source],[$target]";
 	require File::Copy;
-	File::Copy::mv( $source, $target ) or Carp::confess( "move failed: $!" );
+	File::Copy::mv( $source, $target ) or confess( "move failed: $!" );
 
 }
 
 sub cpf {
 	my ( $source, $target ) = _shared_fc( @_ );
 	require File::Copy;
-	File::Copy::cp( $source, $target ) or Carp::confess( "copy failed: $!" );
+	File::Copy::cp( $source, $target ) or confess( "copy failed: $!" );
+}
+
+sub mkpath { 
+	my ($path) = @_;
+	confess "Path missing" unless $path;
+	return $path if -d $path;
+	require File::Path;
+	my $errors;
+	File::Path::make_path($path,{ error => \$errors });
+	if ($errors && @{$errors}) {
+		my $errstr;
+		for (@{$errors}) {
+			$errstr .= $_ . $/
+		}
+		confess("[$path] creation failed : [$/$errstr]$/");
+	}
+	return $path;
+	
+	
 }
 
 sub _shared_fc {
@@ -107,11 +127,10 @@ sub subonfiles {
 	confess( "First parameter to subonfiles was not a code reference" ) unless ref( $sub ) eq 'CODE';
 	checkdir( $dir, 'subonfiles directory' );
 	my @files = File::Find::Rule->file()->in( $dir );
-	my $continue;
+	my $stop;
 	for ( @files ) {
-		next unless ( index( lc( $_ ), '.mp3' ) != -1 );
-		$continue = &$sub( $_ );
-		last unless $continue;
+		$stop = &$sub( abspath($_) );
+		last if $stop;
 	}
 }
 

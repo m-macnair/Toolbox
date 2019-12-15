@@ -65,6 +65,7 @@ sub main {
 
 sub inrc {
 	my ( $value ) = @_;
+	`touch "$ENV{HOME}/.bashrc"`
 	return ` grep "$value" "$ENV{HOME}/.bashrc"`;
 }
 
