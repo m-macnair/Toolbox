@@ -3,9 +3,9 @@ use Moo;
 extends 'Toolbox::SqlAbstract';
 ACCESSORS: {
 	has _stmnt_cache => (
-		is => 'rw', 
-		lazy => 1,
-		default => sub { return {} } ;
+		is      => 'rw',
+		lazy    => 1,
+		default => sub { return {} };
 	);
 
 }
@@ -13,21 +13,22 @@ ACCESSORS: {
 =head3 _get_prepared
 	for to be more complex at some point probably
 =cut
+
 sub _get_prepared {
-	my ($self,$id) = @_;
+	my ( $self, $id ) = @_;
 	my $return = $self->_stmnt_cache->{$id};
-	unless ($return) {
-		my $sth = $self->dbh->prepare("$id") or die "failed to prepare statement :/";
+	unless ( $return ) {
+		my $sth = $self->dbh->prepare( "$id" ) or die "failed to prepare statement :/";
 		$return = $self->_stmnt_cache->{$id} = $sth;
 	}
-	return $return; #return 
+	return $return; #return
 }
 
-sub _shared_query { 
-	my ($self,$Q,$P) = @_;
+sub _shared_query {
+	my ( $self, $Q, $P ) = @_;
 	$P ||= [];
-	my $sth = $self->_get_prepared($Q);
-	$sth->execute($sth,@{$P});
+	my $sth = $self->_get_prepared( $Q );
+	$sth->execute( $sth, @{$P} );
 	return $sth;
 
 }

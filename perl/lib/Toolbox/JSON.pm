@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 package Toolbox::JSON;
+use Try::Tiny;
 require Exporter;
 use Carp qw/confess croak/;
 our @ISA = qw(Exporter);
@@ -15,13 +16,21 @@ use JSON;
 sub jsonloadfile {
 
 	my ( $path ) = @_;
-	my $buffer;
-	open( my $fh, '<', $path ) or die "failed to open file [$path] : $!";
-	while ( <$fh> ) {
-		$buffer .= $_;
+	my $buffer = '';
+	try {
+		open( my $fh, '<:raw', $path ) or die "failed to open file [$path] : $!";
+
+		# :|
+		while ( my $line = <$fh> ) {
+			chomp( $line );
+			$buffer .= $line;
+		}
+		close( $fh );
+		JSON::decode_json( $buffer );
 	}
-	close( $fh );
-	JSON::decode_json( $buffer );
+	catch {
+		confess( "Failed - $_" );
+	};
 
 }
 

@@ -4,36 +4,38 @@ use warnings;
 use DBI;
 use Data::Dumper;
 use Toolbox::JSON;
-main(@ARGV);
+main( @ARGV );
 
 sub main {
-	my $def;
-	
-	for(qw/devconf.json devconfprivate.json/){
-		my $path = "etc/$_";
-		if (-f $path ){
-			my $fdef = jsonloadfile($path);
-			$def = {
-				%{$def},
-				%{$fdef}
-			}
+	my $conf = {};
+
+	for ( qw/devconf.json devconfprivate.json/ ) {
+		my $path = "./etc/$_";
+
+		if ( -f $path ) {
+			my $fdef = jsonloadfile( $path ) || {};
+
+			$conf = {%{$conf}, %{$fdef}};
 		}
 	}
-	unless (%{$def}){
+	unless ( %{$conf} ) {
 		die "No usable definitions";
 	}
-	my $dbh = DBI->connect(
-		$conf->{db}->{dsn},
-		$conf->{db}->{user},
-		$conf->{db}->{pass}
-	) or die $DBI::errstr;
-	my $tablesth = $dbh->prepare("show tables");
-	$tablesth->execute();
-	
-	my $defsth = $dbh->prepare("show create table ?");
-	while(my $tablerow = $tablesth->fetchrow_arrayref()){
-		$defsth->excecute(@{$tablerow});
-		my $createstmnt = $defsth->fetchrow_arrayref();
-		print Dumper($createstmnt);
+	my $dbh = DBI->connect( $conf->{db}->{dsn}, $conf->{db}->{user}, $conf->{db}->{pass}, {RaiseError => 1} ) or die $DBI::errstr;
+
+	my @tables = $dbh->tables();
+
+	for ( @tables ) {
+
+		my $row = $dbh->selectall_arrayref( "show create table $_ " )->[0];
+
+		my $ofn = "etc/schema/$row->[0].sql";
+		open( my $ofh, '>', $ofn ) or die "Unable to open [$ofn] : $!";
+		$row->[1] =~ s/\) ENGINE.*/\)/;
+
+		print $ofh $row->[1];
+		close( $ofh ) or die "Unable to close [$ofn] : $!";
+		`git add $ofn`;
 	}
+
 }
