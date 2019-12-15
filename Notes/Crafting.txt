@@ -1,0 +1,9 @@
+Bob Martin:
+1. If you do anything to software that makes it hard to change, you have thwarted the reason software exists; you have harmed the system you are working on. 
+2. The test suite you want is the test suite that allows you to make a decision when it passes.
+3. If you have a test suite that you trust with your life, you can clean the code.
+4. Good architecture allows major decisions to be deferred.
+5. The ultimate failure of a software developer [is] when a business, that is not technically competent, says you're not touching that module.
+
+Observations
+1. The purpose of comments is to express the 'why', not necessarily the 'how' as that should be self evident
