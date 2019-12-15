@@ -1,1 +1,1 @@
- 
+alias perll="perl -I lib "

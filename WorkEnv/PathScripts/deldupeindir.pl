@@ -10,7 +10,7 @@ main( @ARGV );
 sub main {
 	my ( $safe, $burn ) = @_;
 	die "Safe directory [$safe] is not a directory" unless ( -d $safe );
-	die "Safe directory [$burn] is not a directory" unless ( -d $burn );
+	die "Burn directory [$burn] is not a directory" unless ( -d $burn );
 	die " Same directory provided twice!"           unless ( $safe ne $burn );
 
 	my @safelist = File::Find::Rule->file()->in( $safe );
