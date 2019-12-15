@@ -1,9 +1,11 @@
 #!/usr/bin/perl
+# ABSTRACT : Given two directories, hash all files in both, and delete any files in the second directory that match hashes found in the first directory 
 use strict;
 use warnings;
 use Digest::MD5;
 use File::Find::Rule;
 main( @ARGV );
+
 
 sub main {
 	my ( $safe, $burn ) = @_;
