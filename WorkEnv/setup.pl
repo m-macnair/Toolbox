@@ -13,27 +13,28 @@ sub main {
 	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $thisfile );
 	my $tbdir = Cwd::abs_path( dirname( $thisdir ) );
 	BASH: {
-		next;
-		unless ( -e "$ENV{HOME}/.bash_profile" ) {
-			`touch "$ENV{HOME}/.bash_profile"`;
-			`chmod +x  "$ENV{HOME}/.bash_profile"`;
-			`echo "#!/bin/bash" > "$ENV{HOME}/.bash_profile"`;
+
+		BASHPROFILE: {
+			unless ( -e "$ENV{HOME}/.bash_profile" ) {
+				`touch "$ENV{HOME}/.bash_profile"`;
+				`chmod +x  "$ENV{HOME}/.bash_profile"`;
+				`echo "#!/bin/bash" > "$ENV{HOME}/.bash_profile"`;
+			}
+			unless ( inprof( 'source ~/.bashrc' ) ) {
+				`echo "source ~/.bashrc" > "$ENV{HOME}/.bash_profile"`;
+			}
+
+			`touch "$ENV{HOME}/.bashrc"` unless -e "$ENV{HOME}/.bashrc";
+			my $in = inrc( 'Toolbox/WorkEnv/Bash/bash_source.sh' );
+
+			unless ( $in ) {
+
+				my $cmd = qq|echo "source $thisdir/Bash/bash_source.sh" >> "$ENV{HOME}/.bashrc"|;
+
+				system( $cmd);
+			}
 		}
-		unless ( inprof( 'source ~/.bashrc' ) ) {
-			`echo "source ~/.bashrc" > "$ENV{HOME}/.bash_profile"`;
-		}
 
-		`touch "$ENV{HOME}/.bashrc"` unless -e "$ENV{HOME}/.bashrc";
-		my $in = inrc( 'Toolbox/WorkEnv/Bash/bash_source.sh' );
-
-		unless ( $in ) {
-
-			my $cmd = qq|echo "source $thisdir/Bash/bash_source.sh" >> "$ENV{HOME}/.bashrc"|;
-
-			system( $cmd);
-		}
-
-		# Set up some environment variables
 		BASHSOURCE: {
 
 			#reset
@@ -50,31 +51,13 @@ sub main {
 	}
 
 	PERL: {
+		#connect perltidy if there isn't one already
 		my $pt  = "$ENV{HOME}/.perltidyrc";
 		my $tpt = Cwd::abs_path( "$thisdir/Perl/perltidyrc" );
-		my $dolink;
-		if ( -l $pt ) {
-
-			if ( readlink( $pt ) eq $tpt ) {
-
-				#de nada
-			} else {
-				unlink( $pt );
-				$dolink = 1;
-
-			}
-		} else {
-			if ( -e $pt ) {
-				my $cmd = "cp $pt $pt\_" . time;
-				`$cmd`;
-			}
-			$dolink = 1;
-		}
-		if ( $dolink ) {
+		unless ( -e $pt ) {
 			my $linked = eval { symlink( $tpt, $pt ); 1 };
 			die "Failed to softlink $tpt as $pt : $!" unless $linked;
 		}
-
 	}
 
 	GIT: {
