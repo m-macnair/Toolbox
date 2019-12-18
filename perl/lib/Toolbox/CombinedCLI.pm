@@ -1,6 +1,9 @@
-package Toolbox::CombinedCLI;
 use strict;
-use warnings;
+
+package Toolbox::CombinedCLI;
+our $VERSION = '0.21';
+
+##~ DIGEST : 0d01a470bedf9c34af9e95a20f48ed1e
 
 =head1 Toolbox::CombinedCLI
 	Standard overlay to Config::Any::Merge and friends
@@ -13,7 +16,6 @@ require Config::Any::Merge;
 require Hash::Merge;
 use Data::Dumper;
 use Carp;
-our $VERSION = 0.2;
 
 =head2 array_config
 	take one or two array refs, with required and optional command line parameters respectively and merge them into a href containing the command line values, croaking if any required are missing 

@@ -7,4 +7,5 @@ else
 	ZPATH="./"
 	echo "Processing $ZPATH";
 fi
-find $ZPATH -type f -a \( -iname "*.pm" -o -iname "*.pl" -o -iname "*.t" \) -exec perltidy -b {} \;
+find $ZPATH
+find ./ -name "*.pm" -exec "$TOOLBOXDIR/perl/script/selectivebump.pl" {} \; 

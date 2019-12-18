@@ -14,7 +14,9 @@ use warnings;
 		<actions>
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
+
+##~ DIGEST : 516777ae87b5a961e3a5cacec775c399
 
 =head1 SYNOPSIS
 	TODO
