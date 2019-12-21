@@ -1,9 +1,9 @@
 use strict;
 
 package Toolbox::CombinedCLI;
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
-##~ DIGEST : 0d01a470bedf9c34af9e95a20f48ed1e
+##~ DIGEST : 8203d99b08f3758ebe79f9edacbd1bd4
 
 =head1 Toolbox::CombinedCLI
 	Standard overlay to Config::Any::Merge and friends

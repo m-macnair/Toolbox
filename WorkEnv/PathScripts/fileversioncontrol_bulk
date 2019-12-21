@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Toolbox::CodeVersion;
+use Toolbox::CombinedCLI;
+use Toolbox::FileSystem;
+main( @ARGV );
+
+=head1 ABSTRACT
+
+	On a file
+		Detect presence of digest
+		after 'VERSION' definition, construct a digest
+		compare digests
+		if no match; create a new digest and bump module version number according to params
+
+=cut
+
+sub main {
+	my $conf;
+	if ( scalar( @_ ) == 1 ) {
+		$conf->{directory} = shift;
+		$conf->{quiet} = 1;
+	} else {
+		$conf = Toolbox::CombinedCLI::array_config( [qw/ directory /], [qw/increment set quiet/] );
+	}
+	Toolbox::FileSystem::checkdir( $conf->{directory} );
+	my $cv = Toolbox::CodeVersion->new();
+	
+	Toolbox::FileSystem::subonfiles(
+		sub {
+			my ( $path ) = @_;
+			for ( qw/  .pm / ) {
+
+				return unless substr( $path, -length( $_ ) ) eq $_;
+			}
+
+			$cv->process_file( $path, $conf );
+			return;
+		},
+		$conf->{directory}
+	);
+
+}

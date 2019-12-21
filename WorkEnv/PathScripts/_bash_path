@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+ZPATH="$1";
+if [ -d $ZPATH ]
+then
+	echo "Processing $ZPATH";
+else
+	ZPATH="./"
+	echo "Processing $ZPATH";
+fi 
