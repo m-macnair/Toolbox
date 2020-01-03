@@ -4,5 +4,5 @@ use SubSystem::CLIHelper;
 main();
 
 sub main {
-	my $clv = SubSystem::CLIHelper::array_config();
+    my $clv = SubSystem::CLIHelper::array_config();
 }

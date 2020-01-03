@@ -6,72 +6,73 @@ use Moo;
 
 ACCESSORS: {
 
-	# subclasses can do funky things with this - so long as it provides a DBI $dbh
-	has dbh => (
-		is       => 'rw',
-		required => 1,
-	);
+  # subclasses can do funky things with this - so long as it provides a DBI $dbh
+    has dbh => (
+        is       => 'rw',
+        required => 1,
+    );
 
-	has sqla => (
-		is      => 'rw',
-		lazy    => 1,
-		builder => '_build_abstract'
-	);
+    has sqla => (
+        is      => 'rw',
+        lazy    => 1,
+        builder => '_build_abstract'
+    );
 
 }
 
 sub select {
-	my $self = shift;
-	my ( $s, @p ) = $self->sqla->select( @_ );
-	return $self->_shared_query( $s, \@p );
+    my $self = shift;
+    my ( $s, @p ) = $self->sqla->select(@_);
+    return $self->_shared_query( $s, \@p );
 }
 
 sub get {
-	my $self = shift;
-	my $from = shift;
-	my $sth  = $self->select( $from, ['*'], @_ );
-	my $row  = $sth->fetchrow_hashref();
+    my $self = shift;
+    my $from = shift;
+    my $sth  = $self->select( $from, ['*'], @_ );
+    my $row  = $sth->fetchrow_hashref();
 }
 
 sub update {
-	my $self = shift;
-	my ( $s, @p ) = $self->sqla->update( @_ );
-	return $self->_shared_query( $s, \@p );
+    my $self = shift;
+    my ( $s, @p ) = $self->sqla->update(@_);
+    return $self->_shared_query( $s, \@p );
 }
 
 sub insert {
-	my $self = shift;
-	my ( $s, @p ) = $self->sqla->insert( @_ );
-	return $self->_shared_query( $s, \@p );
+    my $self = shift;
+    my ( $s, @p ) = $self->sqla->insert(@_);
+    return $self->_shared_query( $s, \@p );
 }
 
 sub delete {
-	my $self = shift;
-	my ( $s, @p ) = $self->sqla->delete( @_ );
-	return $self->_shared_query( $s, \@p );
+    my $self = shift;
+    my ( $s, @p ) = $self->sqla->delete(@_);
+    return $self->_shared_query( $s, \@p );
 
 }
 
 sub _shared_query {
-	my ( $self, $Q, $P ) = @_;
-	$P ||= [];
-	my $sth = $self->dbh->prepare( $Q ) or die "failed to prepare statement :/";
+    my ( $self, $Q, $P ) = @_;
+    $P ||= [];
+    my $sth = $self->dbh->prepare($Q) or die "failed to prepare statement :/";
 
-	try {
-		$sth->execute( @{$P} ) or die $!;
-	}
-	catch {
-		require Data::Dumper;
-		require Carp;
-		Carp::confess( "Failed to execute ($Q) with parameters" . Data::Dumper::Dumper( \@{$P} ) );
-	};
-	return $sth;
+    try {
+        $sth->execute( @{$P} ) or die $!;
+    }
+    catch {
+        require Data::Dumper;
+        require Carp;
+        Carp::confess( "Failed to execute ($Q) with parameters"
+              . Data::Dumper::Dumper( \@{$P} ) );
+    };
+    return $sth;
 
 }
 
 sub _build_abstract {
-	require SQL::Abstract;
-	return SQL::Abstract->new();
+    require SQL::Abstract;
+    return SQL::Abstract->new();
 }
 
 1;

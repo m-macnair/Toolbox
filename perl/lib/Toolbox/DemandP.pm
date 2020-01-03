@@ -21,42 +21,50 @@ our @EXPORT = qw/
 =cut
 
 sub demand_p {
-	my ( $map, $list ) = @_;
+    my ( $map, $list ) = @_;
 
-	confess( "\$map is not a map, is instead : " . Dumper( $map ) )    unless ref( $map ) eq 'HASH';
-	confess( "\$list is not a list, is instead : " . Dumper( $list ) ) unless ref( $list ) eq 'ARRAY';
+    confess( "\$map is not a map, is instead : " . Dumper($map) )
+      unless ref($map) eq 'HASH';
+    confess( "\$list is not a list, is instead : " . Dumper($list) )
+      unless ref($list) eq 'ARRAY';
 
-	my $msg;
-	CHECK: {
-		for my $check ( @{$list} ) {
-			THISCHECK: {
-				my $ref = ref( $check );
+    my $msg;
+  CHECK: {
+        for my $check ( @{$list} ) {
+          THISCHECK: {
+                my $ref = ref($check);
 
-				#"If one of these values is present, move on"
-				if ( $ref eq 'ARRAY' ) {
-					for my $subcheck ( @{$check} ) {
-						if ( defined( $map->{$subcheck} ) ) {
-							next THISCHECK;
-						}
-					}
-					$msg = "None of [" . join( ',', @{$check} ) . "] provided in \$map";
-					last CHECK;
-				} elsif ( $ref ) {
-					$msg = "Non SCALAR, Non ARRAY reference [$ref] passed in \$list";
-					last CHECK;
-				} else {
-					unless ( $map->{$check} ) {
-						$msg = "Required key [$check] missing in \$map";
-						last CHECK;
-					}
-				}
-			}
-		}
-	}
-	if ( $msg ) {
-		confess( "$msg - \$map :\n\t" . Dumper( $map ) );
-	}
-	return;
+                #"If one of these values is present, move on"
+                if ( $ref eq 'ARRAY' ) {
+                    for my $subcheck ( @{$check} ) {
+                        if ( defined( $map->{$subcheck} ) ) {
+                            next THISCHECK;
+                        }
+                    }
+                    $msg =
+                        "None of ["
+                      . join( ',', @{$check} )
+                      . "] provided in \$map";
+                    last CHECK;
+                }
+                elsif ($ref) {
+                    $msg =
+                      "Non SCALAR, Non ARRAY reference [$ref] passed in \$list";
+                    last CHECK;
+                }
+                else {
+                    unless ( $map->{$check} ) {
+                        $msg = "Required key [$check] missing in \$map";
+                        last CHECK;
+                    }
+                }
+            }
+        }
+    }
+    if ($msg) {
+        confess( "$msg - \$map :\n\t" . Dumper($map) );
+    }
+    return;
 }
 
 1;
