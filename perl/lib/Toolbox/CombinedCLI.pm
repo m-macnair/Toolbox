@@ -1,9 +1,9 @@
 use strict;
 
 package Toolbox::CombinedCLI;
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
-##~ DIGEST : 940cb72689c06b82b675ef92f8b235a4
+##~ DIGEST : 30d6870e36c94b846f0c9aecefbe38ae
 
 =head1 Toolbox::CombinedCLI
 	Standard overlay to Config::Any::Merge and friends
@@ -22,86 +22,82 @@ use Carp;
 =cut
 
 sub array_config {
-    my ( $required, $optional, $params ) = @_;
-    $required ||= [];
-    $optional ||= [];
-    my $return;
+	my ( $required, $optional, $params ) = @_;
+	$required ||= [];
+	$optional ||= [];
+	my $return;
 
-    Getopt::Long::Configure(qw( default ));
+	Getopt::Long::Configure( qw( default ) );
 
-    my @options;
+	my @options;
 
-    #generate the value types and reference pointers required by GetOptions
-    for my $key ( explode_array( [ @{$required}, @{$optional} ] ) ) {
-        push( @options, "$key=s" );
-        push( @options, \$$return{$key} );
-    }
+	#generate the value types and reference pointers required by GetOptions
+	for my $key ( explode_array( [ @{$required}, @{$optional} ] ) ) {
+		push( @options, "$key=s" );
+		push( @options, \$$return{$key} );
+	}
 
-    Getopt::Long::GetOptions(@options)
-      or die("Error in command line arguments\n");
+	Getopt::Long::GetOptions( @options )
+	  or die( "Error in command line arguments\n" );
 
-    #this is ugly, but it handles:
-    #I must have $this
-    #I must have $this and ($this or $this)
+	#this is ugly, but it handles:
+	#I must have $this
+	#I must have $this and ($this or $this)
 
-    for my $key ( @{$required} ) {
-        if ( ref($key) ) {
-            my $go;
-            for my $level_1 ( @{$key} ) {
-                if ( $return->{$level_1} ) {
-                    $go = 1;
-                    last;
-                }
-            }
-            croak(  "Did not find required switch in ["
-                  . join( ',', @{$key} )
-                  . "]" )
-              unless $go;
-        }
+	for my $key ( @{$required} ) {
+		if ( ref( $key ) ) {
+			my $go;
+			for my $level_1 ( @{$key} ) {
+				if ( $return->{$level_1} ) {
+					$go = 1;
+					last;
+				}
+			}
+			croak( "Did not find required switch in [" . join( ',', @{$key} ) . "]" )
+			  unless $go;
+		}
 
-        else {
-            croak("Did not find required value [$key] ") unless $return->{$key};
-        }
-    }
+		else {
+			croak( "Did not find required value [$key] " ) unless $return->{$key};
+		}
+	}
 
-    return $return;    #return!
+	return $return; #return!
 }
 
 sub explode_array {
-    my ($array) = @_;
-    my @return;
-    for ( @{$array} ) {
-        if ( ref($_) ) {
-            push( @return, explode_array($_) );
-        }
-        else {
-            push( @return, $_ );
-        }
-    }
-    return @return;
+	my ( $array ) = @_;
+	my @return;
+	for ( @{$array} ) {
+		if ( ref( $_ ) ) {
+			push( @return, explode_array( $_ ) );
+		} else {
+			push( @return, $_ );
+		}
+	}
+	return @return;
 }
 
 sub check_array {
-    my ( $return, $array, $params ) = @_;
+	my ( $return, $array, $params ) = @_;
 
-    for my $key ( @{$array} ) {
-        if ( ref($key) ) {
-            my $result = check_array( $return, $key );
+	for my $key ( @{$array} ) {
+		if ( ref( $key ) ) {
+			my $result = check_array( $return, $key );
 
-            my $ok;
-            for my $switch_key ( @{$key} ) {
-                if ( $return->{$switch_key} ) {
-                    $ok = 1;
-                    last;
-                }
-            }
+			my $ok;
+			for my $switch_key ( @{$key} ) {
+				if ( $return->{$switch_key} ) {
+					$ok = 1;
+					last;
+				}
+			}
 
-        }
-        else {
+		} else {
 
-        }
-    }
-    return 1;
+		}
+	}
+	return 1;
 }
 
 =head2 standard_config
@@ -113,15 +109,15 @@ sub check_array {
 =cut
 
 sub standard_config {
-    my ( $c, $types ) = @_;
-    $c = {} unless $c;
-    config_path($c);
-    if ( $$c{config_file} or $$c{config_dir} ) {
-        warn "no configuration created from a defined config path"
-          unless config_file($c);
-    }
-    cli_smart_overwrite( $c, $types );
-    return $c;
+	my ( $c, $types ) = @_;
+	$c = {} unless $c;
+	config_path( $c );
+	if ( $$c{config_file} or $$c{config_dir} ) {
+		warn "no configuration created from a defined config path"
+		  unless config_file( $c );
+	}
+	cli_smart_overwrite( $c, $types );
+	return $c;
 }
 
 =head2 config_path
@@ -130,15 +126,14 @@ sub standard_config {
 =cut
 
 sub config_path {
-    my ($c) = @_;
-    my $options = [
-        'config=s'     => \$$c{config_file},
-        'config_dir=s' => \$$c{config_dir},
-    ];
-    Getopt::Long::Configure(qw( pass_through ))
-      ;    #ignore everything that isn't config or cfg_dir
-    Getopt::Long::GetOptions(@$options)
-      or die("Error in command line arguments\n");
+	my ( $c ) = @_;
+	my $options = [
+		'config=s'     => \$$c{config_file},
+		'config_dir=s' => \$$c{config_dir},
+	];
+	Getopt::Long::Configure( qw( pass_through ) ); #ignore everything that isn't config or cfg_dir
+	Getopt::Long::GetOptions( @$options )
+	  or die( "Error in command line arguments\n" );
 }
 
 =head2 step 2
@@ -147,68 +142,63 @@ sub config_path {
 =cut
 
 sub config_file {
-    my ($c) = @_;
-    my $file_config = {};
-    if ( $$c{config_file} ) {
-        if ( -e $$c{config_file} && -f _ && -r _ ) {
-            $file_config = Config::Any::Merge->load_files(
-                {
-                    files   => [ $$c{config_file} ],
-                    use_ext => 1
-                }
-            ) or die "failed to load configuration file : $!";
-        }
-        else {
-            warn "failed file path: $!";
-            return 0;
-        }
+	my ( $c ) = @_;
+	my $file_config = {};
+	if ( $$c{config_file} ) {
+		if ( -e $$c{config_file} && -f _ && -r _ ) {
+			$file_config = Config::Any::Merge->load_files(
+				{
+					files   => [ $$c{config_file} ],
+					use_ext => 1
+				}
+			) or die "failed to load configuration file : $!";
+		} else {
+			warn "failed file path: $!";
+			return 0;
+		}
 
-        #this following section has never been tested
-    }
-    elsif ( $$c{config_dir} ) {
-        if ( -e $$c{config_dir} && -d _ && -r _ ) {
-            my @cfiles;
-            File::Find::find(
-                {
-                    wanted => sub {
-                        if (
-                            -f $File::Find::name
+		#this following section has never been tested
+	} elsif ( $$c{config_dir} ) {
+		if ( -e $$c{config_dir} && -d _ && -r _ ) {
+			my @cfiles;
+			File::Find::find(
+				{
+					wanted => sub {
+						if (
+							-f $File::Find::name
 
-                            # 	&& -r _
-                          )
-                        {
-                            push( @cfiles, $File::Find::name );
-                        }
-                        else {
+							# 	&& -r _
+						  )
+						{
+							push( @cfiles, $File::Find::name );
+						} else {
 
-                            # warn $File::Find::name;
-                        }
-                    },
-                    no_chdir => 1
-                },
-                $$c{config_dir}
-            );
-            $file_config = Config::Any::Merge->load_files(
-                {
-                    files   => [@cfiles],
-                    use_ext => 1
-                }
-            ) or die "failed to load configuration file : $!";
-        }
-        else {
-            warn "failed file path: $!";
-            return 0;
-        }
-    }
-    if ( keys(%$file_config) ) {
+							# warn $File::Find::name;
+						}
+					},
+					no_chdir => 1
+				},
+				$$c{config_dir}
+			);
+			$file_config = Config::Any::Merge->load_files(
+				{
+					files   => [@cfiles],
+					use_ext => 1
+				}
+			) or die "failed to load configuration file : $!";
+		} else {
+			warn "failed file path: $!";
+			return 0;
+		}
+	}
+	if ( keys( %$file_config ) ) {
 
-        # warn join $/, keys %$file_config;
-        # warn "file config";
-        %$c = %{ Hash::Merge::merge( $c, $file_config ) };
-        return 1;
-    }
-    else {
-    }
+		# warn join $/, keys %$file_config;
+		# warn "file config";
+		%$c = %{Hash::Merge::merge( $c, $file_config )};
+		return 1;
+	} else {
+	}
 }
 
 =head2 cli_dumb_overwrite
@@ -216,10 +206,10 @@ sub config_file {
 =cut
 
 sub cli_dumb_overwrite {
-    my ( $c, $options ) = @_;
-    Getopt::Long::Configure(qw( default ));
-    Getopt::Long::GetOptions(@$options)
-      or die("Error in command line arguments\n");
+	my ( $c, $options ) = @_;
+	Getopt::Long::Configure( qw( default ) );
+	Getopt::Long::GetOptions( @$options )
+	  or die( "Error in command line arguments\n" );
 }
 
 =head2 cli_smart_overwrite
@@ -234,26 +224,24 @@ target => $value, # this is especially useful for defining arrays from command l
 =cut
 
 sub cli_smart_overwrite {
-    my ( $c, $types, $getoptions_arrayref ) = @_;
-    my $options = [];
-    for my $key ( keys %$c ) {
-        if ( defined( $$types{$key} ) ) {
-            push( @$options, "$key=$$types{$key}{type}" );
-            push( @$options, $$types{$key}{target} );
-        }
-        else {
-            push( @$options, "$key=s" );
-            push( @$options, \$$c{$key} );
-        }
-    }
-    if ($getoptions_arrayref) {
-        Getopt::Long::Configure(@$getoptions_arrayref);
-    }
-    else {
-        Getopt::Long::Configure(qw( default ));
-    }
-    Getopt::Long::GetOptions(@$options)
-      or die("Error in command line arguments\n");
+	my ( $c, $types, $getoptions_arrayref ) = @_;
+	my $options = [];
+	for my $key ( keys %$c ) {
+		if ( defined( $$types{$key} ) ) {
+			push( @$options, "$key=$$types{$key}{type}" );
+			push( @$options, $$types{$key}{target} );
+		} else {
+			push( @$options, "$key=s" );
+			push( @$options, \$$c{$key} );
+		}
+	}
+	if ( $getoptions_arrayref ) {
+		Getopt::Long::Configure( @$getoptions_arrayref );
+	} else {
+		Getopt::Long::Configure( qw( default ) );
+	}
+	Getopt::Long::GetOptions( @$options )
+	  or die( "Error in command line arguments\n" );
 }
 
 #step 4. verify running config

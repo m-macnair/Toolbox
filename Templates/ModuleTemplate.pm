@@ -1,4 +1,4 @@
-use strict;    # applies to all packages defined in the file
+use strict; # applies to all packages defined in the file
 
 package Some::Module;
 use 5.006;
@@ -14,9 +14,9 @@ use warnings;
 		<actions>
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
-##~ DIGEST : 002a0ccc08c5881424d6899c9935e23f
+##~ DIGEST : 516777ae87b5a961e3a5cacec775c399
 
 =head1 SYNOPSIS
 	TODO
@@ -29,12 +29,12 @@ our $VERSION = '0.03';
 =cut
 
 sub new {
-    my ( $class, $conf ) = @_;
-    my $self = {};
-    bless $self, $class;
-    my $initresult = $self->_init($conf);
-    die $initresult->{fail} unless $initresult->{pass};
-    return $self;
+	my ( $class, $conf ) = @_;
+	my $self = {};
+	bless $self, $class;
+	my $initresult = $self->_init( $conf );
+	die $initresult->{fail} unless $initresult->{pass};
+	return $self;
 }
 
 =head3 _init
@@ -42,8 +42,8 @@ sub new {
 =cut
 
 sub _init {
-    my ( $self, $conf ) = @_;
-    return { pass => 1 };
+	my ( $self, $conf ) = @_;
+	return {pass => 1};
 }
 
 =head2 PRIMARY SUBS
@@ -53,9 +53,9 @@ sub _init {
 =cut
 
 sub do_something {
-    my ( $self, $p ) = @_;
-    $self->validate_some_value( $p, 'the_thing' );
-    $self->_do_something($p);
+	my ( $self, $p ) = @_;
+	$self->validate_some_value( $p, 'the_thing' );
+	$self->_do_something( $p );
 }
 
 =head2 SECONDARY SUBS
@@ -63,8 +63,8 @@ sub do_something {
 =cut
 
 sub validate_some_value {
-    my ( $self, $p, $value ) = @_;
-    die unless ( $p->{$value} );
+	my ( $self, $p, $value ) = @_;
+	die unless ( $p->{$value} );
 }
 
 =head2 ACCESSORS

@@ -4,25 +4,25 @@ use strict;
 use warnings;
 use Data::Dumper;
 use File::Find::Rule;
-main(@ARGV);
+main( @ARGV );
 
 sub main {
-    my ( $include, $dir ) = @_;
-    $dir ||= './';
-    $include = '';
-    die "Directory [$dir] is not a directory" unless ( -d $dir );
+	my ( $include, $dir ) = @_;
+	$dir ||= './';
+	$include = '';
+	die "Directory [$dir] is not a directory" unless ( -d $dir );
 
-    my @safelist = File::Find::Rule->file()->name( "*.pm", "*.pl" )->in($dir);
+	my @safelist = File::Find::Rule->file()->name( "*.pm", "*.pl" )->in( $dir );
 
-    for my $path (@safelist) {
+	for my $path ( @safelist ) {
 
-       #news to me - perl -cw writes to stderr instead of stdout even on success
-       #I suppose it makes sense from a generic executable perspective
-        my $res = `perl $include -I lib -cw $path 2>&1`;
-        unless ( index( $res, 'syntax OK' ) != -1 ) {
+		#news to me - perl -cw writes to stderr instead of stdout even on success
+		#I suppose it makes sense from a generic executable perspective
+		my $res = `perl $include -I lib -cw $path 2>&1`;
+		unless ( index( $res, 'syntax OK' ) != -1 ) {
 
-            print "failed : [$res]";
-        }
-    }
+			print "failed : [$res]";
+		}
+	}
 
 }
