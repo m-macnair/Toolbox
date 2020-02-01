@@ -57,7 +57,6 @@ sub main {
 	GIT: {
 		`git config --global credential.helper cache`;
 		`git config --global credential.helper 'cache --timeout=36000'`;
-		`git config --global core.editor "vi "`;
 	}
 }
 
