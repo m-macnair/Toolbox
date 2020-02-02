@@ -1,8 +1,8 @@
 return {
-    dsn        => 'dbi:mysql:gsa_live',
-    user       => 'gsa',
-    pass       => 'gsa',
-    exceptions => [],
-    path       => './',
+	dsn        => 'dbi:mysql:gsa_live',
+	user       => 'gsa',
+	pass       => 'gsa',
+	exceptions => [],
+	path       => './',
 
   }

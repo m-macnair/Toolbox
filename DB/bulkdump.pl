@@ -1,16 +1,16 @@
 use strict;
 use warnings;
-main(@ARGV);
+main( @ARGV );
 
 sub main {
-    my ( $uname, $pw, $odir ) = @_;
-    for my $db (
-        qw/
-        file_db
+	my ( $uname, $pw, $odir ) = @_;
+	for my $db (
+		qw/
+		file_db
 
-        /
-      )
-    {
-        `mysqldump -u $uname -p$pw $db > "$odir/$db.sql"`;
-    }
+		/
+	  )
+	{
+		`mysqldump -u $uname -p$pw $db > "$odir/$db.sql"`;
+	}
 }
