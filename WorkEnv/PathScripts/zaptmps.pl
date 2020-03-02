@@ -50,6 +50,7 @@ sub main {
 	}
 	`rm -Rf /tmp/slpkg/`;
 	`rm -Rf /tmp/SBo/`;
+	`rm -Rf /var/tmp/kdecache-*/krun/*`;
 
 	for my $d ( @dirs ) {
 		if ( ref( $d ) ) {
