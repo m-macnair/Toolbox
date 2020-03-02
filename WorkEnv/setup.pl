@@ -3,13 +3,21 @@ use strict;
 use warnings;
 use Cwd;
 use File::Spec;
+use File::Find;
 use File::Basename;
-main();
+main( @ARGV );
 
 sub main {
+	my ( $allowed_user ) = @_;
+	$allowed_user ||= 'm';
+	unless ( $allowed_user eq $ENV{USER} ) {
+		warn "You are not $allowed_user - some actions will be skipped";
+	}
+	$allowed_user = $allowed_user eq $ENV{USER};
 	my $thisfile = Cwd::abs_path( __FILE__ );
 	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $thisfile );
 	my $tbdir = Cwd::abs_path( dirname( $thisdir ) );
+
 	BASH: {
 		BASHPROFILE: {
 			unless ( -e "$ENV{HOME}/.bash_profile" ) {
@@ -57,6 +65,29 @@ sub main {
 	GIT: {
 		`git config --global credential.helper cache`;
 		`git config --global credential.helper 'cache --timeout=36000'`;
+		if ( $allowed_user ) {
+
+			#set vi by default
+		}
+	}
+
+	KDE: {
+		if ( -e "$ENV{HOME}/.kde" ) {
+			KONSOLE: {
+				File::Find::find(
+					{
+						wanted => sub {
+							return unless -f $File::Find::name;
+							link_in_dir_unless_exists( $File::Find::name, "$ENV{HOME}/.kde/share/apps/konsole/" );
+						},
+						no_chdir => 1,
+						follow   => 0,
+					},
+					"$thisdir/KDE/konsole"
+				);
+			}
+
+		}
 	}
 }
 
@@ -68,4 +99,18 @@ sub inrc {
 sub inprof {
 	my ( $value ) = @_;
 	return `grep "$value" "$ENV{HOME}/.bash_profile"`;
+}
+
+sub link_in_dir_unless_exists {
+	my ( $source_file, $target_dir ) = @_;
+	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $source_file );
+	link_to_unless_exists( $source_file, "$target_dir/$file" );
+}
+
+sub link_to_unless_exists {
+	my ( $source, $target ) = @_;
+	warn "$source,$target";
+	unless ( -e $target ) {
+		`ln -s $source $target`;
+	}
 }

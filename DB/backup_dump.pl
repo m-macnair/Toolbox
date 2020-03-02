@@ -91,7 +91,6 @@ sub compare_new {
 
 			#lul
 			return if $newfile eq $oldfile;
-			warn index( $oldfile, $string );
 			if ( index( $oldfile, $string ) != -1 ) {
 				my $olddigest = digest_file( $oldfile );
 				print "Checking $oldfile.$olddigest against $newfile.$newdigest $/";

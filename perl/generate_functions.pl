@@ -14,7 +14,7 @@ sub main {
 				qw/ functions prefixes suffixes /
 			]
 		],
-		[ qw/ headlevel noreturn explicitreturn doprefixfirst returnprivate objectoriented / ]
+		[qw/ headlevel noreturn explicitreturn doprefixfirst returnprivate objectoriented /]
 	);
 	my $header = '=head1 Generated Functions' . $/;
 
