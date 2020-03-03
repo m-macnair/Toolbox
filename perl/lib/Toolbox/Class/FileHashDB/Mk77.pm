@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
-##~ DIGEST : ddfcfd7f1a0d64f062718a3af3f495c9
+##~ DIGEST : ada7298d5c260c54af1006e3a486cf32
 use Moo;
 with(
 	qw/
@@ -52,7 +52,8 @@ ACCESSORS: {
 			#MISC
 			[ 'sth_lastinsert', "select last_insert_rowid() as id" ],
 
-		) {
+		  )
+		{
 			has $pair->[0] => (
 				is      => 'rw',
 				lazy    => 1,
@@ -93,7 +94,6 @@ sub criticalpath1 {
 
 	$self->loaddirectory( $dir );
 	$self->md5all();
-	$self->commithard();
 	$self->initdirweight();
 	$self->commithard();
 

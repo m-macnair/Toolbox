@@ -17,7 +17,8 @@ ACCESSORS: {
 sub debug_msg {
 	my ( $self, $msg, $min_lvl ) = @_;
 	$min_lvl ||= 1;
-	print "[DEBUG] $msg$/" if $self->debug >= $min_lvl;
+	my $debug = $self->debug || 0;
+	print "[DEBUG] $msg$/" if $debug >= $min_lvl;
 }
 
 1;

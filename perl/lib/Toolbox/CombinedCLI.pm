@@ -1,21 +1,85 @@
 use strict;
 
 package Toolbox::CombinedCLI;
-our $VERSION = '0.24';
-
-##~ DIGEST : 30d6870e36c94b846f0c9aecefbe38ae
+our $VERSION = '0.26';
+##~ DIGEST : cdc8b25ebf6d011feac26690c2162e46
 
 =head1 Toolbox::CombinedCLI
 	Standard overlay to Config::Any::Merge and friends
 =cut
 
 # TODO exporter
-
 require Getopt::Long;
 require Config::Any::Merge;
 require Hash::Merge;
 use Data::Dumper;
 use Carp;
+
+=head2 get_config 
+	My Way - one or two arrays, with config_file/dir as automatic optional which loads config files before choking
+=cut
+
+sub get_config {
+	my ( $required, $optional, $p ) = @_;
+	$required ||= [];
+	$optional ||= [];
+	push( @{$optional}, qw/config_file config_dir/ );
+	my $config_href;
+	Getopt::Long::Configure( qw( default ) );
+	my @options;
+
+	#generate the value types and reference pointers required by GetOptions
+	for my $key ( explode_array( [ @{$required}, @{$optional} ] ) ) {
+		push( @options, "$key=s" );
+		push( @options, \$$config_href{$key} );
+	}
+
+	#capture the arguments
+	Getopt::Long::GetOptions( @options ) or Carp::confess( "Error in command line arguments : $!" );
+	my $file_config = {};
+
+	#it's assumed that a config dir might be overwritten by single config file, e.eg standard/ + scenario.conf
+	if ( $config_href->{config_dir} ) {
+		$file_config->{config_dir} = $config_href->{config_dir};
+		config_file_dir( $file_config );
+	}
+	if ( $config_href->{config_file} ) {
+		$file_config->{config_file} = $config_href->{config_file};
+		config_file_dir( $file_config );
+	}
+
+	#hash::merge by design means that empty keys from config_href will overwrite those filled in by the file config
+	for my $key ( keys( %{$config_href} ) ) {
+		delete( $config_href->{$key} ) unless defined( $config_href->{$key} );
+	}
+
+	#Cargo Cultin'
+	%$config_href = %{Hash::Merge::merge( $file_config, $config_href )};
+	for my $key ( @{$required} ) {
+		my $ref = ref( $key );
+
+		#arrays in required mean 'one of'
+		if ( $ref eq 'ARRAY' ) {
+			for my $subcheck ( @{$key} ) {
+				if ( defined( $config_href->{$subcheck} ) ) {
+
+					#all good - continue
+					next;
+				}
+			}
+			Carp::confess( "None of [" . join( ',', @{$key} ) . "] provided through configuration" );
+		} elsif ( $ref ) {
+			Carp::confess( "[$ref] provided in get_config - can't parse" );
+		} else {
+			unless ( $config_href->{$key} ) {
+				Carp::confess( "[$key] Not provided through configuration" );
+			}
+		}
+	}
+
+	#aaaand we're done
+	return $config_href;
+}
 
 =head2 array_config
 	take one or two array refs, with required and optional command line parameters respectively and merge them into a href containing the command line values, croaking if any required are missing 
@@ -26,9 +90,7 @@ sub array_config {
 	$required ||= [];
 	$optional ||= [];
 	my $return;
-
 	Getopt::Long::Configure( qw( default ) );
-
 	my @options;
 
 	#generate the value types and reference pointers required by GetOptions
@@ -36,14 +98,12 @@ sub array_config {
 		push( @options, "$key=s" );
 		push( @options, \$$return{$key} );
 	}
-
 	Getopt::Long::GetOptions( @options )
 	  or die( "Error in command line arguments\n" );
 
 	#this is ugly, but it handles:
 	#I must have $this
 	#I must have $this and ($this or $this)
-
 	for my $key ( @{$required} ) {
 		if ( ref( $key ) ) {
 			my $go;
@@ -55,15 +115,16 @@ sub array_config {
 			}
 			croak( "Did not find required switch in [" . join( ',', @{$key} ) . "]" )
 			  unless $go;
-		}
-
-		else {
+		} else {
 			croak( "Did not find required value [$key] " ) unless $return->{$key};
 		}
 	}
-
 	return $return; #return!
 }
+
+=head3 explode_array
+	Turn arrays which may contain other arrays into a single stack of values
+=cut
 
 sub explode_array {
 	my ( $array ) = @_;
@@ -80,11 +141,9 @@ sub explode_array {
 
 sub check_array {
 	my ( $return, $array, $params ) = @_;
-
 	for my $key ( @{$array} ) {
 		if ( ref( $key ) ) {
 			my $result = check_array( $return, $key );
-
 			my $ok;
 			for my $switch_key ( @{$key} ) {
 				if ( $return->{$switch_key} ) {
@@ -92,9 +151,7 @@ sub check_array {
 					last;
 				}
 			}
-
 		} else {
-
 		}
 	}
 	return 1;
@@ -114,7 +171,7 @@ sub standard_config {
 	config_path( $c );
 	if ( $$c{config_file} or $$c{config_dir} ) {
 		warn "no configuration created from a defined config path"
-		  unless config_file( $c );
+		  unless config_file_dir( $c );
 	}
 	cli_smart_overwrite( $c, $types );
 	return $c;
@@ -141,7 +198,7 @@ sub config_path {
 	returns 1 if config work was carried out.
 =cut
 
-sub config_file {
+sub config_file_dir {
 	my ( $c ) = @_;
 	my $file_config = {};
 	if ( $$c{config_file} ) {
