@@ -109,7 +109,7 @@ sub link_in_dir_unless_exists {
 
 sub link_to_unless_exists {
 	my ( $source, $target ) = @_;
-	warn "$source,$target";
+
 	unless ( -e $target ) {
 		`ln -s $source $target`;
 	}

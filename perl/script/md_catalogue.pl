@@ -2,7 +2,10 @@ use strict;
 use warnings;
 
 package Mk77;
-use parent qw/Toolbox::Class::FileHashDB::Mk77/;
+use parent qw/
+  Toolbox::Class::FileHashDB::Mk77
+  Toolbox::Moo::Role::PID
+  /;
 
 =head3 checkknown
 	confirm things we know are there are still there
@@ -28,8 +31,8 @@ main();
 sub main {
 
 	my $clv = Toolbox::CombinedCLI::get_config( [ qw/dbfile /, [qw/ dirs dir /] ], [qw/ loadfirst initdb /] );
-	warn Dumper( $clv );
 	my $mk77 = Mk77->new( $clv );
+	$mk77->startpid();
 	my $loaded;
 
 	#there was a reason I wanted this ; can't for the life of me remember what it was
@@ -41,6 +44,8 @@ sub main {
 	$mk77->checkknown();
 	$mk77->dir_or_dirs( $clv ) unless $loaded;
 	$mk77->md5all();
+
+	$mk77->stoppid();
 	print "It is done. Move on!$/";
 
 }
