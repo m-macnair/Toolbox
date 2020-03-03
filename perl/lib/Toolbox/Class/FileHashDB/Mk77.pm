@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
-##~ DIGEST : c3ec6d6614b17ea103617acf26e0e65c
+##~ DIGEST : 51d8cfc80857dd973da9511b9933e383
 use Moo;
 with(
 	qw/
@@ -67,9 +67,7 @@ ACCESSORS: {
 
 sub BUILD {
 	my ( $self, $conf ) = @_;
-	use Data::Dumper;
 
-	# 	die Dumper($conf);
 	$self->_set_dbh(
 		'dbi:SQLite:' . $self->dbfile,
 		undef, undef,
@@ -127,7 +125,7 @@ sub _initblankdb {
 			CREATE TABLE db_attributes (
 				attribute TEXT PRIMARY KEY ,
 				value TEXT
-			);#fails silently when table already exists
+			);
    " ) or Carp::confess $DBI::errstr;
 	$dbh->do( "
 			CREATE TABLE file_list (
@@ -139,9 +137,8 @@ sub _initblankdb {
 				md5 BLOB,
 				one_true BOOL ,
 				one_true_checked BOOL,
-				todelete BOOL,
+				todelete BOOL
 
-				
 			);
 		" ) or Carp::confess $DBI::errstr;
 	for ( qw/md5 one_true one_true_checked todelete / ) {
