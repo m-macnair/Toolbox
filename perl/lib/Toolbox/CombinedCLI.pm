@@ -1,8 +1,8 @@
 use strict;
 
 package Toolbox::CombinedCLI;
-our $VERSION = '0.26';
-##~ DIGEST : cdc8b25ebf6d011feac26690c2162e46
+our $VERSION = '0.27';
+##~ DIGEST : 1a3525083edfeb179f743b7ea7d7ecfe
 
 =head1 Toolbox::CombinedCLI
 	Standard overlay to Config::Any::Merge and friends
@@ -55,24 +55,27 @@ sub get_config {
 
 	#Cargo Cultin'
 	%$config_href = %{Hash::Merge::merge( $file_config, $config_href )};
+
 	for my $key ( @{$required} ) {
-		my $ref = ref( $key );
+		THISKEY: {
+			my $ref = ref( $key );
 
-		#arrays in required mean 'one of'
-		if ( $ref eq 'ARRAY' ) {
-			for my $subcheck ( @{$key} ) {
-				if ( defined( $config_href->{$subcheck} ) ) {
+			#arrays in required mean 'one of'
+			if ( $ref eq 'ARRAY' ) {
+				for my $subcheck ( @{$key} ) {
+					if ( defined( $config_href->{$subcheck} ) ) {
 
-					#all good - continue
-					next;
+						#all good - continue
+						next THISKEY;
+					}
 				}
-			}
-			Carp::confess( "None of [" . join( ',', @{$key} ) . "] provided through configuration" );
-		} elsif ( $ref ) {
-			Carp::confess( "[$ref] provided in get_config - can't parse" );
-		} else {
-			unless ( $config_href->{$key} ) {
-				Carp::confess( "[$key] Not provided through configuration" );
+				Carp::confess( "None of [" . join( ',', @{$key} ) . "] provided through configuration" );
+			} elsif ( $ref ) {
+				Carp::confess( "[$ref] provided in get_config - can't parse" );
+			} else {
+				unless ( $config_href->{$key} ) {
+					Carp::confess( "[$key] Not provided through configuration" );
+				}
 			}
 		}
 	}

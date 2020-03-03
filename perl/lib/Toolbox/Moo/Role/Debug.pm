@@ -1,7 +1,7 @@
 package Toolbox::Moo::Role::Debug;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
-##~ DIGEST : d42b23d7d0996e52f57e076537977641
+##~ DIGEST : 8a09e1101e38af268e55d53082823aac
 use Moo::Role;
 
 ACCESSORS: {
