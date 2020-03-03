@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.04';
+our $VERSION = '0.08';
 
-##~ DIGEST : ada7298d5c260c54af1006e3a486cf32
+##~ DIGEST : c3ec6d6614b17ea103617acf26e0e65c
 use Moo;
 with(
 	qw/
@@ -11,7 +11,7 @@ with(
 );
 use Toolbox::FileSystem;
 use Try::Tiny;
-
+use Carp;
 use DBI; #SQL_VARCHAR
 ACCESSORS: {
 
@@ -21,7 +21,7 @@ ACCESSORS: {
 		has dbfile => (
 			is      => 'rw',
 			lazy    => 1,
-			default => sub { $_[0]->initdb( 1 ); return "./" . time . ".sqlite" }
+			default => sub { Carp::cluck( "Default db" ); $_[0]->initdb( 1 ); return "./" . time . ".sqlite" }
 		);
 	}
 
@@ -37,9 +37,10 @@ ACCESSORS: {
 		for my $pair (
 
 			#FILE
-			[ 'sth_storefile', "insert into file_list (name,dir_id,ext_id,size) values (?,?,?,?)" ],
-			[ 'sth_knownfile', "select id from file_list where name = ? and dir_id = ? and ext_id = ?" ],
-			[ 'sth_setmd5',    "update file_list set md5 = ? where id = ?" ],
+			[ 'sth_storefile',      "insert into file_list (name,dir_id,ext_id,size) values (?,?,?,?)" ],
+			[ 'sth_knownfile',      "select id from file_list where name = ? and dir_id = ? and ext_id = ?" ],
+			[ 'sth_setmd5',         "update file_list set md5 = ? where id = ?" ],
+			[ 'sth_delete_file_id', "delete from file_list where id = ?" ],
 
 			#DIR
 			[ 'sth_storedir', "insert into dir_list (name) values (?)" ],
@@ -66,7 +67,9 @@ ACCESSORS: {
 
 sub BUILD {
 	my ( $self, $conf ) = @_;
+	use Data::Dumper;
 
+	# 	die Dumper($conf);
 	$self->_set_dbh(
 		'dbi:SQLite:' . $self->dbfile,
 		undef, undef,
@@ -119,13 +122,13 @@ sub criticalpath3 {
 #
 sub _initblankdb {
 	my ( $self, $dbh ) = @_;
-	die "no dbh" unless $dbh;
+	Carp::confess "no dbh" unless $dbh;
 	$dbh->do( "
 			CREATE TABLE db_attributes (
 				attribute TEXT PRIMARY KEY ,
 				value TEXT
 			);#fails silently when table already exists
-   " ) or die $DBI::errstr;
+   " ) or Carp::confess $DBI::errstr;
 	$dbh->do( "
 			CREATE TABLE file_list (
 				id INTEGER PRIMARY KEY ,
@@ -137,14 +140,14 @@ sub _initblankdb {
 				one_true BOOL ,
 				one_true_checked BOOL,
 				todelete BOOL,
-				deleted BOOL
+
 				
 			);
-		" ) or die $DBI::errstr;
-	for ( qw/md5 one_true one_true_checked todelete deleted/ ) {
+		" ) or Carp::confess $DBI::errstr;
+	for ( qw/md5 one_true one_true_checked todelete / ) {
 		$dbh->do( "
 			CREATE index $_\_index ON file_list($_);
-		" ) or die $DBI::errstr;
+		" ) or Carp::confess $DBI::errstr;
 	}
 
 	$dbh->do( "
@@ -153,11 +156,11 @@ sub _initblankdb {
 				name TEXT,
 				weight INTEGER
 			);
-		" ) or die $DBI::errstr;
+		" ) or Carp::confess $DBI::errstr;
 	for ( qw/name weight/ ) {
 		$dbh->do( "
 			CREATE index dir_list_$_\_index ON dir_list($_);
-		" ) or die $DBI::errstr;
+		" ) or Carp::confess $DBI::errstr;
 	}
 
 	$dbh->do( "
@@ -165,11 +168,11 @@ sub _initblankdb {
 				id INTEGER PRIMARY KEY ,
 				name TEXT
 			);
-		" ) or die $DBI::errstr;
+		" ) or Carp::confess $DBI::errstr;
 	for ( qw/name weight/ ) {
 		$dbh->do( "
 			CREATE index extlist_$_\_index ON dir_list($_);
-		" ) or die $DBI::errstr;
+		" ) or Carp::confess $DBI::errstr;
 	}
 	$dbh->commit();
 }
@@ -193,14 +196,39 @@ sub loaddirectory {
 	$self->commithard();
 }
 
-# =head2 SECONDARY SUBS
-# =head3 storepath
-# 	record a single file path in sqlite
-# =cut
-#
-#
-#
-#
+sub checkknown {
+	my ( $self ) = @_;
+	my $select_sth = $self->dbh->prepare( "
+			select
+			f.id as id,
+			d.name as dir,
+			f.name as file ,
+			e.name as ext
+		from
+			file_list f 
+			join dir_list d 
+				on f.dir_id = d.id
+			join ext_list e 
+				on f.ext_id = e.id
+
+	" );
+
+	$select_sth->execute();
+	while ( my $row = $select_sth->fetchrow_hashref() ) {
+		my $path = "$row->{dir}/$row->{file}$row->{ext}";
+		unless ( -f $path ) {
+			$self->sth_delete_file_id->execute( $row->{id} );
+			$self->commitmaybe();
+		}
+	}
+	$self->commithard();
+}
+
+=head2 SECONDARY SUBS
+=head3 storepath
+	record a single file path in sqlite
+=cut
+
 sub storepath {
 	my ( $self, $fullpath ) = @_;
 	unless ( -e $fullpath ) {
@@ -314,7 +342,7 @@ sub md5path {
 	my ( $self, $path ) = @_;
 	use Digest::MD5;
 	my $ctx = Digest::MD5->new;
-	open( my $fh, '<', $path ) or die "Can't open [$path]: $!";
+	open( my $fh, '<', $path ) or Carp::confess "Can't open [$path]: $!";
 	$ctx->addfile( $fh );
 	return $ctx->digest;
 }
@@ -419,7 +447,50 @@ sub setcheckedanddelete {
 sub dodeletes {
 	my ( $self ) = @_;
 
-	my $fetchsth = $self->dbh->prepare( "
+	my $fetchsth = $self->dbh->prepare(
+		$self->_path_qstring . "
+			where todelete = 1 
+
+	"
+	);
+
+	$fetchsth->execute();
+	while ( my $row = $fetchsth->fetchrow_hashref() ) {
+		my $path = "$row->{dir}/$row->{file}$row->{ext}";
+		if ( -f $path ) {
+			if ( unlink( $path ) ) {
+				$self->debug_msg( "deleted file [$path]" );
+				$self->sth_delete_file_id->execute( $row->{id} );
+
+				# always commit hard for a delete since it's unrecoverable ;\
+				$self->commithard();
+			} else {
+				Carp::confess "failed to delete file [$path]: $!";
+			}
+		} else {
+			if ( -e $path ) {
+				Carp::confess "attempted to delete non-file path [$path]";
+			} else {
+				$self->debug_msg( "attempted to delete non-existant path [$path]" );
+			}
+		}
+	}
+	$self->commithard();
+}
+
+sub dir_or_dirs {
+	my ( $self, $c ) = @_;
+	if ( $c->{dirs} ) {
+		for my $dir ( @{$c->{dirs}} ) {
+			$self->loaddirectory( $dir );
+		}
+	} else {
+		$self->loaddirectory( $c->{dir} );
+	}
+}
+
+sub _path_qstring {
+	return '
 		select
 			f.id as id,
 			d.name as dir,
@@ -431,32 +502,7 @@ sub dodeletes {
 				on f.dir_id = d.id
 			join ext_list e 
 				on f.ext_id = e.id
-			where todelete = 1 
-			and deleted is null
-	" );
-	my $deletedsth = $self->dbh->prepare( "
-			update file_list set deleted = 1 where id = ? ;
-	" );
-	$fetchsth->execute();
-	while ( my $row = $fetchsth->fetchrow_hashref() ) {
-		my $path = "$row->{dir}/$row->{file}$row->{ext}";
-		if ( -f $path ) {
-			if ( unlink( $path ) ) {
-				$self->debug_msg( "deleted file [$path]" );
-				$deletedsth->execute( $row->{id} );
-				$self->commitmaybe();
-			} else {
-				die "failed to delete file [$path]: $!";
-			}
-		} else {
-			if ( -e $path ) {
-				die "attempted to delete non-file path [$path]";
-			} else {
-				$self->debug_msg( "attempted to delete non-existant path [$path]" );
-			}
-		}
-	}
-	$self->commithard();
+	';
 }
 
 1;

@@ -1,7 +1,7 @@
 package Toolbox::Moo::Role::DB;
-our $VERSION = '0.02';
+our $VERSION = '0.04';
 
-##~ DIGEST : 44cbc0d55f01f810949f75fdb77b133b
+##~ DIGEST : 057c6e57601b94ec6e8bd86eb84d2d55
 use Moo::Role;
 
 ACCESSORS: {
@@ -47,4 +47,16 @@ sub commithard {
 	$self->dbh->commit();
 }
 
+=head3 _func_sth_accessor
+ THIS DOESN'T AND CAN'T WORK 
+=cut
+
+# sub _mk_sth_accessor {
+# 	my ($self, $pair ) = @_;
+# 	has $pair->[0] => (
+# 		is      => 'rw',
+# 		lazy    => 1,
+# 		default => sub { $_[0]->dbh->prepare( $pair->[1] ) }
+# 	);
+# }
 1;

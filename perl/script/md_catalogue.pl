@@ -8,38 +8,6 @@ use parent qw/Toolbox::Class::FileHashDB::Mk77/;
 	confirm things we know are there are still there
 =cut
 
-sub checkknown {
-	my ( $self ) = @_;
-	my $select_sth = $self->dbh->prepare( "
-			select
-			f.id as id,
-			d.name as dir,
-			f.name as file ,
-			e.name as ext
-		from
-			file_list f 
-			join dir_list d 
-				on f.dir_id = d.id
-			join ext_list e 
-				on f.ext_id = e.id
-			where deleted = null
-	" );
-
-	my $update_sth = $self->dbh->prepare( "
-		update file_list set deleted = 1 where id = ?
-	" );
-
-	$select_sth->execute();
-	while ( my $row = $select_sth->fetchrow_hashref() ) {
-		my $path = "$row->{dir}/$row->{file}$row->{ext}";
-		unless ( -f $path ) {
-			$update_sth->execute( $row->{id} );
-			$self->commitmaybe();
-		}
-	}
-	$self->commithard();
-}
-
 sub dir_or_dirs {
 	my ( $self, $c ) = @_;
 	if ( $c->{dirs} ) {
@@ -60,7 +28,7 @@ main();
 sub main {
 
 	my $clv = Toolbox::CombinedCLI::get_config( [ qw/dbfile /, [qw/ dirs dir /] ], [qw/ loadfirst initdb /] );
-
+	warn Dumper( $clv );
 	my $mk77 = Mk77->new( $clv );
 	my $loaded;
 
