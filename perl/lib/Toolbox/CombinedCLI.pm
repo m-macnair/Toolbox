@@ -1,8 +1,8 @@
 use strict;
 
 package Toolbox::CombinedCLI;
-our $VERSION = '0.27';
-##~ DIGEST : 1a3525083edfeb179f743b7ea7d7ecfe
+our $VERSION = '0.28';
+##~ DIGEST : 8d3cf4ef40c519e0a0a2ce21b8f2d334
 
 =head1 Toolbox::CombinedCLI
 	Standard overlay to Config::Any::Merge and friends
@@ -21,9 +21,13 @@ use Carp;
 
 sub get_config {
 	my ( $required, $optional, $p ) = @_;
+
 	$required ||= [];
 	$optional ||= [];
-	push( @{$optional}, qw/config_file config_dir/ );
+	$p        ||= {};
+	my $default = $p->{'default'} || {};
+
+	push( @{$optional}, qw/config_file config_dir cfg / );
 	my $config_href;
 	Getopt::Long::Configure( qw( default ) );
 	my @options;
@@ -43,8 +47,9 @@ sub get_config {
 		$file_config->{config_dir} = $config_href->{config_dir};
 		config_file_dir( $file_config );
 	}
-	if ( $config_href->{config_file} ) {
-		$file_config->{config_file} = $config_href->{config_file};
+	if ( $config_href->{config_file} || $config_href->{cfg} ) {
+
+		$file_config->{config_file} = $config_href->{config_file} || $config_href->{cfg};
 		config_file_dir( $file_config );
 	}
 
@@ -54,7 +59,7 @@ sub get_config {
 	}
 
 	#Cargo Cultin'
-	%$config_href = %{Hash::Merge::merge( $file_config, $config_href )};
+	%$config_href = %{Hash::Merge::merge( $default, $file_config, $config_href )};
 
 	for my $key ( @{$required} ) {
 		THISKEY: {
