@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.09';
+our $VERSION = '0.1';
 
-##~ DIGEST : 51d8cfc80857dd973da9511b9933e383
+##~ DIGEST : aae07725d81f7010062b631a18010610
 use Moo;
 with(
 	qw/
@@ -442,8 +442,8 @@ sub setcheckedanddelete {
 
 #
 sub dodeletes {
-	my ( $self ) = @_;
-
+	my ( $self, $p ) = @_;
+	$p ||= {};
 	my $fetchsth = $self->dbh->prepare(
 		$self->_path_qstring . "
 			where todelete = 1 
@@ -456,7 +456,12 @@ sub dodeletes {
 		my $path = "$row->{dir}/$row->{file}$row->{ext}";
 		if ( -f $path ) {
 			if ( unlink( $path ) ) {
-				$self->debug_msg( "deleted file [$path]" );
+				if ( $p->{vocal} ) {
+					print "\t Deleted [$path]$/";
+				} else {
+					$self->debug_msg( "deleted file [$path]" );
+				}
+
 				$self->sth_delete_file_id->execute( $row->{id} );
 
 				# always commit hard for a delete since it's unrecoverable ;\
@@ -468,7 +473,12 @@ sub dodeletes {
 			if ( -e $path ) {
 				Carp::confess "attempted to delete non-file path [$path]";
 			} else {
-				$self->debug_msg( "attempted to delete non-existant path [$path]" );
+				if ( $p->{vocal} ) {
+					print "\tAttempted to delete non-existant path [$path]";
+				} else {
+					$self->debug_msg( "Attempted to delete non-existant path [$path]" );
+				}
+
 			}
 		}
 	}
