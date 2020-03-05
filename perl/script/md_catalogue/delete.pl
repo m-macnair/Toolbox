@@ -26,7 +26,7 @@ sub main {
 	my $clv = Toolbox::CombinedCLI::get_config( [qw/dbfile /], [qw/ vocal /] );
 
 	# 	warn Dumper($clv);
-	my $mk77_raw = MK77->new(
+	my $mk77 = MK77->new(
 		{
 			dbfile => $clv->{dbfile}
 		}
