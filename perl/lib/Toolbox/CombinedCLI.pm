@@ -1,8 +1,8 @@
 use strict;
 
 package Toolbox::CombinedCLI;
-our $VERSION = '0.28';
-##~ DIGEST : 8d3cf4ef40c519e0a0a2ce21b8f2d334
+our $VERSION = '0.29';
+##~ DIGEST : cd897eca985bb32179366816fb16503e
 
 =head1 Toolbox::CombinedCLI
 	Standard overlay to Config::Any::Merge and friends
@@ -59,7 +59,7 @@ sub get_config {
 	}
 
 	#Cargo Cultin'
-	%$config_href = %{Hash::Merge::merge( $default, $file_config, $config_href )};
+	%$config_href = %{Hash::Merge::merge( $file_config, $config_href, $default )};
 
 	for my $key ( @{$required} ) {
 		THISKEY: {
