@@ -55,7 +55,7 @@ sub main {
 	}
 
 	for my $filterdb ( @{$filterfiles} ) {
-		warn $filterdb;
+		print "Processing $filterdb$/";
 		my $mk77_filter = MK77->new(
 			{
 				dbfile => $filterdb
