@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.1';
+our $VERSION = '0.12';
 
-##~ DIGEST : aae07725d81f7010062b631a18010610
+##~ DIGEST : a983fe6ca37e3ff9850712c64176c6f0
 use Moo;
 with(
 	qw/
@@ -207,7 +207,7 @@ sub checkknown {
 				on f.dir_id = d.id
 			join ext_list e 
 				on f.ext_id = e.id
-
+			where f.todelete is null
 	" );
 
 	$select_sth->execute();
@@ -426,11 +426,11 @@ sub setcheckedanddelete {
 	my $checkedmd5sth = $self->dbh->prepare( "
 		update file_list 
 		set 
-			one_true_checked = 1,
 			todelete = 1
 		where
 			md5 = ?
 			and id != ?
+			and one_true is null
 	" );
 	$truemd5sth->execute();
 	while ( my $truerow = $truemd5sth->fetchrow_hashref() ) {

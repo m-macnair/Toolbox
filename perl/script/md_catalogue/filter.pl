@@ -38,7 +38,7 @@ main();
 
 sub main {
 
-	my $clv = Toolbox::CombinedCLI::get_config( [qw/rawdb filterdbs /], [qw/ dodeletes /] );
+	my $clv = Toolbox::CombinedCLI::get_config( [qw/rawdb filterdbs /], [qw/ dodeletes vocal /] );
 
 	# 	warn Dumper($clv);
 	my $mk77_raw = MK77->new(
@@ -71,7 +71,7 @@ sub main {
 		$mk77_raw->commithard();
 	}
 	if ( $clv->{dodeletes} ) {
-		$mk77_raw->dodeletes();
+		$mk77_raw->dodeletes( $clv );
 	}
 
 	print "It is done. Move on!$/";

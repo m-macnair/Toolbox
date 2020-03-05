@@ -30,7 +30,7 @@ main();
 
 sub main {
 
-	my $clv = Toolbox::CombinedCLI::get_config( [ qw/dbfile /, [qw/ dirs dir /] ], [qw/ loadfirst initdb /] );
+	my $clv = Toolbox::CombinedCLI::get_config( [ qw/dbfile /, [qw/ dirs dir /] ], [qw/ loadfirst initdb vocal markdeletes dodeletes /] );
 	my $mk77 = Mk77->new( $clv );
 	$mk77->startpid();
 	my $loaded;
@@ -44,6 +44,16 @@ sub main {
 	$mk77->checkknown();
 	$mk77->dir_or_dirs( $clv ) unless $loaded;
 	$mk77->md5all();
+
+	if ( $clv->{markdeletes} ) {
+		$mk77->initdirweight( $clv );
+		$mk77->setonetrue( $clv );
+		$mk77->setcheckedanddelete( $clv );
+	}
+
+	if ( $clv->{dodeletes} ) {
+		$mk77->dodeletes( $clv );
+	}
 
 	$mk77->stoppid();
 	print "It is done. Move on!$/";
