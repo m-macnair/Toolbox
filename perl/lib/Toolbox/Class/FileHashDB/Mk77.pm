@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
-##~ DIGEST : a983fe6ca37e3ff9850712c64176c6f0
+##~ DIGEST : 0402b2635d4253aa72ba1b3c13a849d5
 use Moo;
 with(
 	qw/
@@ -194,7 +194,7 @@ sub loaddirectory {
 }
 
 sub checkknown {
-	my ( $self ) = @_;
+	my ( $self, $clv ) = @_;
 	my $select_sth = $self->dbh->prepare( "
 			select
 			f.id as id,
@@ -214,6 +214,7 @@ sub checkknown {
 	while ( my $row = $select_sth->fetchrow_hashref() ) {
 		my $path = "$row->{dir}/$row->{file}$row->{ext}";
 		unless ( -f $path ) {
+			print "\t [$path] missing$/" if $clv->{vocal};
 			$self->sth_delete_file_id->execute( $row->{id} );
 			$self->commitmaybe();
 		}
@@ -359,7 +360,9 @@ sub initdirweight {
 	$dirliststh->execute();
 	while ( my $row = $dirliststh->fetchrow_hashref() ) {
 		my @slashes = split( $self->directory_separator, $row->{name} );
-		$setweightsth->execute( scalar( @slashes ), $row->{id} );
+		my $weight = scalar( @slashes );
+		print "\t [$row->{name}] weighted as [$weight]$/" if $clv->{vocal};
+		$setweightsth->execute( $weight, $row->{id} );
 		$self->commitmaybe();
 	}
 	$self->commithard();
@@ -367,7 +370,7 @@ sub initdirweight {
 
 #
 sub setonetrue {
-	my ( $self ) = @_;
+	my ( $self, $clv ) = @_;
 	my $md5ssth = $self->dbh->prepare(
 		q/
 		select distinct(md5) as md5 from file_list
@@ -402,10 +405,10 @@ sub setonetrue {
 		my $onetruerow = $filesforsth->fetchrow_hashref();
 
 		#this can't not be set unless the db was interfered with at some point
-		if ( $self->debug() ) {
+		if ( $self->debug() || $clv->{vocal} ) {
 
 			#expensive action if not in debug mode
-			my $md5_string = $self->debug_msg( "Setting $onetruerow->{id} as one true file for [<unknown digest>]" );
+			$self->debug_msg( "Setting $onetruerow->{id} as one true file for [<unknown digest>]" );
 		}
 
 		$thisfilesth->execute( $onetruerow->{id} );

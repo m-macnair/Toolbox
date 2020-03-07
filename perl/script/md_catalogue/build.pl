@@ -30,7 +30,14 @@ main();
 
 sub main {
 
-	my $clv = Toolbox::CombinedCLI::get_config( [ qw/dbfile /, [qw/ dirs dir /] ], [qw/ loadfirst initdb vocal markdeletes dodeletes /] );
+	my $clv = Toolbox::CombinedCLI::get_config(
+
+		#required - second array means 'at least one of these values is required'
+		[ qw/dbfile /, [qw/ dirs dir /] ],
+
+		#optional
+		[qw/ loadfirst initdb vocal markdeletes dodeletes checknown skipdirs /]
+	);
 	my $mk77 = Mk77->new( $clv );
 	$mk77->startpid();
 	my $loaded;
@@ -41,9 +48,13 @@ sub main {
 		$mk77->dir_or_dirs( $clv );
 		$loaded = 1;
 	}
-	$mk77->checkknown();
-	$mk77->dir_or_dirs( $clv ) unless $loaded;
-	$mk77->md5all();
+	if ( $clv->{checknown} ) {
+		$mk77->checkknown( $clv );
+	}
+	unless ( $clv->{skipdirs} ) {
+		$mk77->dir_or_dirs( $clv ) unless $loaded;
+	}
+	$mk77->md5all( $clv );
 
 	if ( $clv->{markdeletes} ) {
 		$mk77->initdirweight( $clv );
