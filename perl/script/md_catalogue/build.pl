@@ -36,7 +36,7 @@ sub main {
 		[ qw/dbfile /, [qw/ dirs dir /] ],
 
 		#optional
-		[qw/ loadfirst initdb vocal markdeletes dodeletes checknown skipdirs /]
+		[qw/ loadfirst initdb vocal markdeletes dodeletes checknown skipdirs resetdeletes/]
 	);
 	my $mk77 = Mk77->new( $clv );
 	$mk77->startpid();
