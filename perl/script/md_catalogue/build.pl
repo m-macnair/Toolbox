@@ -56,6 +56,10 @@ sub main {
 	}
 	$mk77->md5all( $clv );
 
+	if ( $clv->{resetdeletes} ) {
+		$mk77->resetdeletionrules( $clv );
+	}
+
 	if ( $clv->{markdeletes} ) {
 		$mk77->initdirweight( $clv );
 		$mk77->setonetrue( $clv );

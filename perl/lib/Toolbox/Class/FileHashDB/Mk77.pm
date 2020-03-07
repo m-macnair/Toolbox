@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.13';
+our $VERSION = '0.15';
 
-##~ DIGEST : 0402b2635d4253aa72ba1b3c13a849d5
+##~ DIGEST : 8ba9a916fa26a5c96222fbf86e62fbc3
 use Moo;
 with(
 	qw/
@@ -354,7 +354,7 @@ sub setidmd5 {
 
 #
 sub initdirweight {
-	my ( $self, $clv)     = @_;
+	my ( $self, $clv ) = @_;
 	my $dirliststh   = $self->dbh->prepare( "select * from dir_list order by name asc" );
 	my $setweightsth = $self->dbh->prepare( "update dir_list set weight = ? where id = ?" );
 	$dirliststh->execute();
@@ -419,6 +419,15 @@ sub setonetrue {
 	$self->commithard();
 }
 
+sub resetdeletionrules {
+	my ( $self, $clv ) = @_;
+
+	$self->dbh->do( 'update file_list set one_true = null;' );
+	$self->dbh->do( 'update file_list set one_true_checked = null;' );
+	$self->dbh->do( 'update file_list set todelete = null;' );
+
+}
+
 #
 sub setcheckedanddelete {
 	my ( $self ) = @_;
@@ -445,8 +454,8 @@ sub setcheckedanddelete {
 
 #
 sub dodeletes {
-	my ( $self, $p ) = @_;
-	$p ||= {};
+	my ( $self, $clv ) = @_;
+	$clv ||= {};
 	my $fetchsth = $self->dbh->prepare(
 		$self->_path_qstring . "
 			where todelete = 1 
@@ -459,7 +468,7 @@ sub dodeletes {
 		my $path = "$row->{dir}/$row->{file}$row->{ext}";
 		if ( -f $path ) {
 			if ( unlink( $path ) ) {
-				if ( $p->{vocal} ) {
+				if ( $clv->{vocal} ) {
 					print "\t Deleted [$path]$/";
 				} else {
 					$self->debug_msg( "deleted file [$path]" );
@@ -476,7 +485,7 @@ sub dodeletes {
 			if ( -e $path ) {
 				Carp::confess "attempted to delete non-file path [$path]";
 			} else {
-				if ( $p->{vocal} ) {
+				if ( $clv->{vocal} ) {
 					print "\tAttempted to delete non-existant path [$path]";
 				} else {
 					$self->debug_msg( "Attempted to delete non-existant path [$path]" );
