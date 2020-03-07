@@ -1,7 +1,7 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
-##~ DIGEST : 8ba9a916fa26a5c96222fbf86e62fbc3
+##~ DIGEST : b2db073af70c8e5d08c601c95b565ada
 use Moo;
 with(
 	qw/
@@ -422,7 +422,7 @@ sub setonetrue {
 sub resetdeletionrules {
 	my ( $self, $clv ) = @_;
 	if ( $clv->{vocal} ) {
-		print "\tResetting deletion states";
+		print "\tResetting deletion states$/";
 	} else {
 		$self->debug_msg( "Resetting deletion states" );
 	}
@@ -460,12 +460,7 @@ sub setcheckedanddelete {
 sub dodeletes {
 	my ( $self, $clv ) = @_;
 	$clv ||= {};
-	my $fetchsth = $self->dbh->prepare(
-		$self->_path_qstring . "
-			where todelete = 1 
-
-	"
-	);
+	my $fetchsth = $self->dbh->prepare( $self->_path_qstring . "where todelete = 1" );
 
 	$fetchsth->execute();
 	while ( my $row = $fetchsth->fetchrow_hashref() ) {
@@ -490,7 +485,7 @@ sub dodeletes {
 				Carp::confess "attempted to delete non-file path [$path]";
 			} else {
 				if ( $clv->{vocal} ) {
-					print "\tAttempted to delete non-existant path [$path]";
+					print "\tAttempted to delete non-existant path [$path]$/";
 				} else {
 					$self->debug_msg( "Attempted to delete non-existant path [$path]" );
 				}

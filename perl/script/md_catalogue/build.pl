@@ -69,7 +69,7 @@ sub main {
 	if ( $clv->{dodeletes} ) {
 		$mk77->dodeletes( $clv );
 	}
-
+	$mk77->dbh->disconnect();
 	$mk77->stoppid();
 	print "It is done. Move on!$/";
 
