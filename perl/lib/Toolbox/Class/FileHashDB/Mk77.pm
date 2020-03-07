@@ -421,7 +421,11 @@ sub setonetrue {
 
 sub resetdeletionrules {
 	my ( $self, $clv ) = @_;
-
+	if ( $clv->{vocal} ) {
+		print "\tResetting deletion states";
+	} else {
+		$self->debug_msg( "Resetting deletion states" );
+	}
 	$self->dbh->do( 'update file_list set one_true = null;' );
 	$self->dbh->do( 'update file_list set one_true_checked = null;' );
 	$self->dbh->do( 'update file_list set todelete = null;' );
