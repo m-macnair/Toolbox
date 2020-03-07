@@ -354,7 +354,7 @@ sub setidmd5 {
 
 #
 sub initdirweight {
-	my ( $self )     = @_;
+	my ( $self, $clv)     = @_;
 	my $dirliststh   = $self->dbh->prepare( "select * from dir_list order by name asc" );
 	my $setweightsth = $self->dbh->prepare( "update dir_list set weight = ? where id = ?" );
 	$dirliststh->execute();
