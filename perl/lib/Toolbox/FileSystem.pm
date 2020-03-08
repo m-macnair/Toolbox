@@ -3,9 +3,9 @@ use warnings;
 
 # ABSTRACT: common filesystem-y things
 package Toolbox::FileSystem;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
-##~ DIGEST : 5af9f4a21d3eeafef51267b01ab77030
+##~ DIGEST : 6b2946ddc8e02096e6f36b22b8d2dc04
 use Carp qw/ confess /;
 
 use Exporter qw(import);
@@ -84,20 +84,43 @@ sub mvf {
 
 }
 
+=head3 safemvf
+	Move a file or else - in that it'll try and do everything what needs doing otherwise
+=cut 
+
 sub safemvf {
+
 	my ( $source, $target ) = _shared_fc( @_ );
+
+	#HCF if we're trying to move nothing
+	checkfile( $source );
+	my $target_dir;
+
+	require File::Basename;
+	my ( $name, $path, $suffix ) = File::Basename::fileparse( $source, qr/\.[^.]*/ );
+
+	#Handle moving a file to a directory without an explicit file name
 	if ( -d $target ) {
-		require File::Basename;
-		my ( $name, $path, $suffix ) = File::Basename::fileparse( $source, qr/\.[^.]*/ );
+
 		$target = "$target/$name$suffix";
+	} else {
+
+		#only care about the directory here
+		my ( undef, $target_dir, undef ) = File::Basename::fileparse( $target, qr/\.[^.]*/ );
+
+		#does nothing if target directory exists already
+		mkpath( $target_dir );
+		$target = "$target_dir/$name$suffix";
 	}
+
+	#HFC if we're trying to overwrite
 	if ( -e $target ) {
 		Carp::confess( "safe target [$target] already exists" );
 	}
 
 	require File::Copy;
-	File::Copy::mv( $source, $target ) or confess( "move failed: $!" );
-
+	File::Copy::mv( $source, $target_dir || $target ) or confess( "move failed: $!" );
+	return 1;
 }
 
 sub cpf {
@@ -105,6 +128,10 @@ sub cpf {
 	require File::Copy;
 	File::Copy::cp( $source, $target ) or confess( "copy failed: $!" );
 }
+
+=head3 mkpath
+	make a directory path or die trying
+=cut
 
 sub mkpath {
 	my ( $path ) = @_;
@@ -120,6 +147,8 @@ sub mkpath {
 		}
 		confess( "[$path] creation failed : [$/$errstr]$/" );
 	}
+
+	#for when it's coming in as a string concat and the result is useful as a variable
 	return $path;
 
 }
