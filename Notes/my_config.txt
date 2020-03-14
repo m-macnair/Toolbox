@@ -1,14 +1,14 @@
 How I (want to) do things:
 
 Principles
-	Perl First, C++ When Performance Matters, PHP when $it doesn't matter, Python when there's no alternative
+	Perl First, C++ When Performance Matters
 	ORM should be considered at the overarching layer, *not* for subsystems. If ORM seems to be a good idea for a subsystem, it's *probably* not been broken down far enough
-	snake_case on principle
+	snake_case for files, tables, columns, 
+	crushedcase method/sub names, because thats what pays my bills right now ;\
 	`# TODO `(or equivalent comment marker) as the first part of a line or the first line in a todo comment
 	validation/mangling occurs at the public method level, so that private methods can just Do The Thing
 
 Layout - Yet to actually do this
-
 
 	Critical Path
 		Init

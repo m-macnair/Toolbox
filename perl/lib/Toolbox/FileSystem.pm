@@ -1,12 +1,13 @@
 use strict;
 use warnings;
 
-# ABSTRACT: common filesystem-y things
 package Toolbox::FileSystem;
-our $VERSION = '0.04';
 
-##~ DIGEST : 6b2946ddc8e02096e6f36b22b8d2dc04
-use Carp qw/ confess /;
+# ABSTRACT: common filesystem-y things
+our $VERSION = '0.05';
+
+##~ DIGEST : 89d197b547c298fd7862170722e56832
+use Carp qw/ cluck confess /;
 
 use Exporter qw(import);
 our @EXPORT_OK = qw(
@@ -20,6 +21,7 @@ our @EXPORT_OK = qw(
   cpf
   abspath
   mkpath
+  safeduplicatepath
 );
 
 =head3 checkpath
@@ -97,30 +99,49 @@ sub safemvf {
 	my $target_dir;
 
 	require File::Basename;
-	my ( $name, $path, $suffix ) = File::Basename::fileparse( $source, qr/\.[^.]*/ );
 
 	#Handle moving a file to a directory without an explicit file name
 	if ( -d $target ) {
-
-		$target = "$target/$name$suffix";
+		my ( $name, $dir ) = File::Basename::fileparse( $source );
+		$target = "$target/$name";
 	} else {
 
-		#only care about the directory here
-		my ( undef, $target_dir, undef ) = File::Basename::fileparse( $target, qr/\.[^.]*/ );
+		my ( $name, $target_dir ) = File::Basename::fileparse( $target );
 
 		#does nothing if target directory exists already
 		mkpath( $target_dir );
-		$target = "$target_dir/$name$suffix";
+		$target = "$target_dir/$name";
 	}
 
 	#HFC if we're trying to overwrite
-	if ( -e $target ) {
-		Carp::confess( "safe target [$target] already exists" );
-	}
+	safeduplicatepath( $target, {fatal => 1} );
 
 	require File::Copy;
 	File::Copy::mv( $source, $target_dir || $target ) or confess( "move failed: $!" );
 	return 1;
+}
+
+sub safeduplicatepath {
+	my ( $path, $c ) = @_;
+
+	$c ||= {};
+	if ( -e $path ) {
+		confess( "Target [$path] already exists" ) if $c->{fatal};
+		require File::Basename;
+		my ( $name, $dir, $suffix ) = File::Basename::fileparse( $path, qr/\.[^.]*/ );
+		require Data::UUID;
+		my $ug   = Data::UUID->new;
+		my $uuid = $ug->to_string( $ug->create() );
+
+		# TODO sprintf?
+		my $newpath = "$dir/$name\_$uuid$suffix";
+
+		cluck( "Target [$path] already exists, renamed to $newpath" ) unless $c->{mute};
+
+		return $newpath;
+	}
+	return $path;
+
 }
 
 sub cpf {
@@ -135,7 +156,7 @@ sub cpf {
 
 sub mkpath {
 	my ( $path ) = @_;
-	confess "Path missing" unless $path;
+	confess( "Path missing" ) unless $path;
 	return $path if -d $path;
 	require File::Path;
 	my $errors;

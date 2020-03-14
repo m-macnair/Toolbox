@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use SubSystem::CLIHelper;
+use Toolbox::CombinedCLI;
 main();
 
 sub main {
