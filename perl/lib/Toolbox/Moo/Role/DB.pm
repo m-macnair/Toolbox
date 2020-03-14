@@ -1,5 +1,5 @@
 package Toolbox::Moo::Role::DB;
-our $VERSION = '0.04';
+our $VERSION = 'v1.0.1';
 
 ##~ DIGEST : 057c6e57601b94ec6e8bd86eb84d2d55
 use Moo::Role;

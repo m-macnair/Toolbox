@@ -8,7 +8,9 @@ package Toolbox::DemandP;
 require Exporter;
 use Carp qw/confess/;
 use Data::Dumper;
-our @ISA = qw(Exporter);
+our $VERSION = 'v1.0.2';
+
+##~ DIGEST : 4da9a4afcb1fcf2c000c7b122c6c53c5
 
 our @EXPORT = qw/
   demand_p

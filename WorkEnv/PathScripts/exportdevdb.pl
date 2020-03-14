@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# I have no idea what this is for :thinkingface:
 use strict;
 use warnings;
 use DBI;

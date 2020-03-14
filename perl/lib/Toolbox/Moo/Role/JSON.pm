@@ -1,6 +1,6 @@
 package Toolbox::Moo::Role::JSON;
 use Moo::Role;
-our $VERSION = '0.02';
+our $VERSION = 'v1.0.1';
 ##~ DIGEST : e91f0115147dfefeb6c783216e51ce73
 # enable $self->json and sugar
 use JSON;

@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+# for to do 'some directory or current directory'
+if [ -d $1 ]
+then
+	ZEPATH=$1
+else
+	ZEPATH="./"
+fi 
+echo "Processing $ZEPATH directory";

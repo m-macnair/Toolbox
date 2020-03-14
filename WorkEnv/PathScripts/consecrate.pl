@@ -7,7 +7,7 @@ sub main {
 	my ( $bulk_args, $path_args );
 	if ( scalar( @_ ) > 1 ) {
 		require Toolbox::CombinedCLI;
-		my $conf = Toolbox::CombinedCLI::array_config( [qw/ directory /], [qw/increment set /] );
+		my $conf = Toolbox::CombinedCLI::get_config( [qw/ directory /], [qw/increment set /] );
 		my $bulk_args = join( ' ', @_ );
 		$path_args = "$conf->{directory}";
 	} else {
@@ -18,9 +18,8 @@ sub main {
 		}
 	}
 
-	print `perltidydir.sh $path_args`;
-	print `fileversioncontrol_bulk $bulk_args`;
-	print `zapdirectory.sh $path_args`;
+	system( "bulk_perl_file_prep.sh $bulk_args" );
+	system( "zap_directory.sh $path_args" );
 
 }
 

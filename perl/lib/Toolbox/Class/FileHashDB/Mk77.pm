@@ -1,6 +1,5 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = '0.16';
-
+our $VERSION = 'v1.0.1';
 ##~ DIGEST : b2db073af70c8e5d08c601c95b565ada
 use Moo;
 with(

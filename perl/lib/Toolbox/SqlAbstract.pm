@@ -1,9 +1,11 @@
 package Toolbox::SqlAbstract;
+our $VERSION = 'v1.0.2';
+
+##~ DIGEST : 98f0c24291269bec8b65041667f232fe
 
 #ABSTRACT: use DBI and SqlAbstract quickly - mainly to reinforce my knowledge of moo
 use Try::Tiny;
 use Moo;
-
 ACCESSORS: {
 
 	# subclasses can do funky things with this - so long as it provides a DBI $dbh
@@ -11,13 +13,11 @@ ACCESSORS: {
 		is       => 'rw',
 		required => 1,
 	);
-
 	has sqla => (
 		is      => 'rw',
 		lazy    => 1,
 		builder => '_build_abstract'
 	);
-
 }
 
 sub select {
@@ -49,14 +49,12 @@ sub delete {
 	my $self = shift;
 	my ( $s, @p ) = $self->sqla->delete( @_ );
 	return $self->_shared_query( $s, \@p );
-
 }
 
 sub _shared_query {
 	my ( $self, $Q, $P ) = @_;
 	$P ||= [];
 	my $sth = $self->dbh->prepare( $Q ) or die "failed to prepare statement :/";
-
 	try {
 		$sth->execute( @{$P} ) or die $!;
 	}
@@ -66,12 +64,10 @@ sub _shared_query {
 		Carp::confess( "Failed to execute ($Q) with parameters" . Data::Dumper::Dumper( \@{$P} ) );
 	};
 	return $sth;
-
 }
 
 sub _build_abstract {
 	require SQL::Abstract;
 	return SQL::Abstract->new();
 }
-
 1;

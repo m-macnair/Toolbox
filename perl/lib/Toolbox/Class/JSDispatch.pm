@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Toolbox::Class::JSDispatch;
-our $VERSION = '0.04';
+our $VERSION = 'v1.0.1';
 
 ##~ DIGEST : a09c01717e3983becf740c13e76b3ae6
 

@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-source _bash_path
-find $ZPATH -name "*.epub" -maxdepth 1 -exec renameepub.pl {} \;

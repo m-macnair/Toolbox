@@ -1,7 +1,7 @@
 use strict;
 
 package Toolbox::CombinedCLI;
-our $VERSION = '0.29';
+our $VERSION = 'v1.0.1';
 ##~ DIGEST : cd897eca985bb32179366816fb16503e
 
 =head1 Toolbox::CombinedCLI

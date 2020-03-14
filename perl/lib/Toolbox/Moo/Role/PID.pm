@@ -1,5 +1,5 @@
 package Toolbox::Moo::Role::PID;
-our $VERSION = '0.02';
+our $VERSION = 'v1.0.1';
 
 ##~ DIGEST : 783fe5eab5e7b76fc10625c8fb72722b
 # do pids - ideally with wrappers around main() calls

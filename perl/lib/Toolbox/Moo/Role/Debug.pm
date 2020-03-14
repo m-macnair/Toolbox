@@ -1,5 +1,5 @@
 package Toolbox::Moo::Role::Debug;
-our $VERSION = '0.03';
+our $VERSION = 'v1.0.1';
 
 ##~ DIGEST : 8a09e1101e38af268e55d53082823aac
 use Moo::Role;

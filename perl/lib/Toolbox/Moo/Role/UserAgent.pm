@@ -1,5 +1,5 @@
 package Toolbox::Moo::Role::UserAgent;
-our $VERSION = '0.02';
+our $VERSION = 'v1.0.1';
 
 ##~ DIGEST : d10960452f623a0c281ce7cf3300e321
 # Do http requests

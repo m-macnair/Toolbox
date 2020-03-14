@@ -5,7 +5,9 @@ package Toolbox::JSON;
 use Try::Tiny;
 require Exporter;
 use Carp qw/confess croak/;
-our @ISA = qw(Exporter);
+our $VERSION = 'v1.0.2';
+
+##~ DIGEST : 075c7a6ad05449da4080accfa96d24a9
 
 our @EXPORT = qw/
   jsonloadfile

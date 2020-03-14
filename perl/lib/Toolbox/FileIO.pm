@@ -4,11 +4,11 @@ use Carp qw/cluck confess/;
 package Toolbox::FileIO;
 
 # ABSTRACT: Read and write files in various ways
-our $VERSION = '0.01';
+our $VERSION = 'v1.0.2';
 
-##~ DIGEST : 44ebeb1676250e7e8b0ea6eb74f05ac1
+##~ DIGEST : b5dd7576dd7cbca2eb45fefa79da4f8c
 
-our $FILEHANDLES = {};
+our $VERSION = 'v1.0.1';
 
 =head1 NAME
 	~

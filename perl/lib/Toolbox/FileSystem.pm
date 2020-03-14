@@ -4,7 +4,7 @@ use warnings;
 package Toolbox::FileSystem;
 
 # ABSTRACT: common filesystem-y things
-our $VERSION = '0.05';
+our $VERSION = 'v1.0.1';
 
 ##~ DIGEST : 89d197b547c298fd7862170722e56832
 use Carp qw/ cluck confess /;

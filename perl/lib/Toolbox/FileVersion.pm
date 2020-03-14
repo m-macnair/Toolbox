@@ -1,5 +1,5 @@
 package Toolbox::FileVersion;
-our $VERSION = '0.04';
+our $VERSION = 'v1.0.1';
 
 ##~ DIGEST : 921c89ff5cfb0e95d9dfbda9223e3bf1
 use Moo;

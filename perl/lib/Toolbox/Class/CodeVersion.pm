@@ -1,28 +1,103 @@
-package Toolbox::CodeVersion;
+package Toolbox::Class::CodeVersion;
 
 # ABSTRACT : Modify version numbers for perl files based on digests of the file after the version string
-our $VERSION = '0.04';
+our $VERSION = 'v1.0.1';
 
-##~ DIGEST : ab8af56c58b388608c3b1a23fedc241a
+##~ DIGEST : 7880de6fbe8d5472ea9603bb9bb97e37
 use Moo;
+
+ACCESSORS: {
+
+	has rewriter => is => 'rw',
+	  lazy       => 1,
+	  default    => sub {
+		require App::RewriteVersion;
+
+		#no ()!!
+		return App::RewriteVersion->new;
+	  };
+
+	has mute  => is => 'rw',
+	  lazy    => 1,
+	  default => sub {
+		1;
+	  };
+}
 use Toolbox::CombinedCLI;
 use Toolbox::FileSystem;
 use Digest::MD5;
-use App::RewriteVersion;
+
+=head2 MAJOR
+=cut
 
 sub process_file {
 	my ( $self, $path, $conf ) = @_;
+	die "Obsolete";
 	my $digest_result = $self->digest_source_file( $path );
-	print $digest_result->{output} unless $conf->{quiet};
+	print $digest_result->{output} unless $self->mute();
 
 	if ( $digest_result->{new_digest} || $conf->{set} ) {
 
 		#for when just the digest needs doing
 		return if $conf->{skipversion};
 		my $modify_result = $self->modify_version( $path, $conf );
-		print $modify_result->{output} unless $conf->{quiet};
+		print $modify_result->{output} unless $self->mute();
 	}
-	print $/ unless $conf->{quiet};
+	print $/ unless $self->mute();
+}
+
+sub mmp {
+	my ( $self, $path, $conf ) = @_;
+	my $digest_result = $self->digest_source_file( $path );
+	print $digest_result->{output} unless $self->mute();
+
+	if ( $digest_result->{new_digest} || $conf->{force} ) {
+
+		#for when just the digest needs doing
+		return if $conf->{skipversion};
+		my $modify_result = $self->_mmmp( $path, $conf );
+		print $modify_result->{output}, $/ unless $self->mute();
+	}
+
+}
+
+sub detectversiontype {
+	my ( $self, $path, $conf ) = @_;
+
+	my $currentversion = $self->rewriter->version_from( Toolbox::FileSystem::abspath( $path ) );
+
+	return scalar( split( '\.', $currentversion ) );
+
+}
+
+=head2 MINOR
+=cut
+
+sub _mmmp {
+	my ( $self, $path, $conf ) = @_;
+	my $return = {};
+
+	my $currentversion = $self->rewriter->version_from( Toolbox::FileSystem::abspath( $path ) );
+
+	if ( $currentversion ) {
+		`cp "$path" "$path.bak"`;
+		my $newversion;
+		if ( $conf->{set} ) {
+
+			$newversion = $conf->{set};
+			$return->{output} .= "\tExplicit version : $newversion";
+		} else {
+			$newversion = $self->rewriter->bump_version( $currentversion );
+			$return->{output} = "\tNew version : $newversion";
+		}
+
+		#actually do something
+		$self->rewriter->rewrite_version( $path, $newversion );
+	} else {
+		$return->{output} .= "$path does not have a usable version identifier - may not be quoted correctly?";
+	}
+
+	return $return; #return!
 }
 
 sub digest_source_file {
@@ -103,25 +178,25 @@ sub digest_source_file {
 sub modify_version {
 	my ( $self, $path, $conf ) = @_;
 	my $return = {};
-	my $app    = App::RewriteVersion->new();
-	my $cv     = $app->version_from( Toolbox::FileSystem::abspath( $path ) );
 
-	if ( $cv ) {
+	my $currentversion = $self->rewriter->version_from( Toolbox::FileSystem::abspath( $path ) );
+
+	if ( $currentversion ) {
 		`cp "$path" "$path.bak"`;
-		my $new_version;
+		my $newversion;
 		if ( $conf->{set} ) {
 
-			$new_version = $conf->{set};
-			$return->{output} .= "\tExplicit version : $new_version";
+			$newversion = $conf->{set};
+			$return->{output} .= "\tExplicit version : $newversion";
 		} elsif ( $conf->{increment} ) {
-			$new_version = $cv + $conf->{increment};
-			$return->{output} .= "\tVersion Increment of $conf->{increment} to $new_version";
+			$newversion = $currentversion + $conf->{increment};
+			$return->{output} .= "\tVersion Increment of $conf->{increment} to $newversion";
 		} else {
-			$new_version = $cv + 0.01;
-			$return->{output} .= "\tVersion AutoIncrement to $new_version";
+			$newversion = $currentversion + 0.01;
+			$return->{output} .= "\tVersion AutoIncrement to $newversion";
 		}
 
-		$app->rewrite_version( $path, $new_version );
+		$self->rewriter->rewrite_version( $path, $newversion );
 
 	} else {
 		$return->{output} .= "$path does not have a usable version identifier - may not be quoted correctly?";
