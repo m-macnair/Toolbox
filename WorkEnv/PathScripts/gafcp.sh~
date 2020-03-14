@@ -1,0 +1,4 @@
+#!/bin/bash
+#git fast commit and pushthe entire repo
+git commit -a -m "$1" 
+git push
