@@ -1,8 +1,8 @@
 use strict;
 use warnings;
-our $VERSION = 'v1.0.8';
+our $VERSION = 'v1.0.9';
 
-##~ DIGEST : d13794c81669ee4214c70512d747b3e3
+##~ DIGEST : 8840ff7209ee001f3ff70097fc732e85
 
 #IG trading platform API trial
 
@@ -144,12 +144,13 @@ sub getencryptionkey {
 sub login {
 	my ( $self ) = @_;
 	$self->log( "Starting new session" );
-	my $key = $self->getencryptionkey();
+
+	# 	my $key = $self->getencryptionkey();
 
 	# 	$self->pass($self->encrypt($self->pass()));
 	my $res = $self->auditedrequest(
 		{
-			url  => $self->rooturl() . 'session',
+			url  => $self->rooturl() . '/session',
 			type => 'POST'
 		},
 		{
@@ -185,7 +186,7 @@ sub order {
 			confess( "$required not provided" ) unless $p->{$required};
 		}
 
-		$orderbody->{direction} = uc( p->{direction} );
+		$orderbody->{direction} = uc( $p->{direction} );
 
 		#always uppercase - IG's proprietary identifiers
 		$orderbody->{epic} = $p->{epic};
@@ -194,7 +195,7 @@ sub order {
 		$orderbody->{size} = $p->{size};
 
 		#when to carry out the order (?)
-		$orderbody->{level} = p->{level};
+		$orderbody->{level} = $p->{level};
 
 	}
 
@@ -211,10 +212,14 @@ sub order {
 	{
 		$orderbody->{$_} = $p->{$_};
 	}
-	$self->log( "Creating order structure dump" );
-	my $ofh = $self->ofh( $self->auditdir() . "/$s\_$usec\_order_structure.pm" );
-	print $ofh Dumper( $orderbody );
-	close( $ofh );
+
+	DUMPSTRUCTURE: {
+		$self->log( "Creating order structure dump" );
+		my ( $s, $usec ) = gettimeofday();
+		my $ofh = $self->ofh( $self->auditdir() . "/$s\_$usec\_order_structure.pm" );
+		print $ofh Dumper( $orderbody );
+		close( $ofh );
+	}
 
 	$self->auditedrequest(
 		{
@@ -260,7 +265,7 @@ sub main {
 			qw/
 			  user
 			  pass
-			  url
+			  rooturl
 			  key
 			  auditroot
 			  /
