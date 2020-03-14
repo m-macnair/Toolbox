@@ -4,6 +4,8 @@ use warnings;
 package Toolbox::CSV;
 use base "Toolbox::SimpleClass";
 
+# OBSOLETE! use Toolbox::FileIO::CSV instead
+
 sub suboncsv {
 
 	my ( $self, $path, $sub ) = @_;

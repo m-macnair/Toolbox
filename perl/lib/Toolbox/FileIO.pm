@@ -4,11 +4,11 @@ use Carp qw/cluck confess/;
 package Toolbox::FileIO;
 
 # ABSTRACT: Read and write files in various ways
-our $VERSION = 'v1.0.2';
+our $VERSION = 'v1.0.3';
 
-##~ DIGEST : b5dd7576dd7cbca2eb45fefa79da4f8c
+##~ DIGEST : 208a0497f37fec2a4e6c9065a3cb87c7
 
-our $VERSION = 'v1.0.1';
+our $FILEHANDLES = {};
 
 =head1 NAME
 	~
@@ -75,6 +75,7 @@ sub closefhs {
 
 	for ( @{$paths} ) {
 		close( $FILEHANDLES->{$_} ) or confess( "Failed to close file handle for [$_] : $!" );
+		undef( $FILEHANDLES->{$_} );
 	}
 
 }
