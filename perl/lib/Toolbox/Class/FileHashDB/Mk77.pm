@@ -1,11 +1,11 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = 'v1.0.1';
-##~ DIGEST : b2db073af70c8e5d08c601c95b565ada
+our $VERSION = 'v1.0.2';
+##~ DIGEST : ba621d4ed078ede0db823e9bfdb54af6
 use Moo;
 with(
 	qw/
-	  Toolbox::Moo::Role::DB
-	  Toolbox::Moo::Role::Debug
+	  Moo::Role::DB
+	  Moo::Role::Debug
 	  /
 );
 use Toolbox::FileSystem;
