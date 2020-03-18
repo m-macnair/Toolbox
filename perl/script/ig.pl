@@ -1,8 +1,8 @@
 use strict;
 use warnings;
-our $VERSION = 'v1.0.9';
+our $VERSION = 'v1.0.10';
 
-##~ DIGEST : 8840ff7209ee001f3ff70097fc732e85
+##~ DIGEST : 0fd07a37febefb76a8dc3f08847b8cdb
 
 #IG trading platform API trial
 
@@ -19,55 +19,66 @@ with qw/
 use Time::HiRes qw/gettimeofday/;
 use Data::Dumper;
 use JSON;
+use Carp qw/confess /;
 
 ACCESSORS: {
 
-	has user      => ( is => 'rw', );
-	has pass      => ( is => 'rw', );
-	has rooturl   => ( is => 'rw', );
-	has key       => ( is => 'rw', );
-	has auditroot => ( is => 'rw' );
-	has currency  => ( is => 'ro', default => sub { 'GBP' } );
-	has mute      => ( is => 'rw' );
-	has auditdir => (
-		is   => 'ro', # this should never change after creation surely? :thinkingface:
-		lazy => 1,
+	OPERATION: {
+		has rooturl       => ( is => 'rw', );
+		has mute          => ( is => 'rw' );
+		has accountstatus => ( is => 'rw' );
+		has currency      => ( is => 'ro', default => sub { 'GBP' } ); # should never change
+	}
+	AUTH: {
+		has user             => ( is => 'rw', );
+		has pass             => ( is => 'rw', );
+		has key              => ( is => 'rw', );
+		has cst              => ( is => 'rw', );
+		has cstage           => ( is => 'rw', );
+		has securitytoken    => ( is => 'rw', );
+		has securitytokenage => ( is => 'rw', );
+	}
+	AUDIT: {
+		has auditroot => ( is => 'rw' );
+		has auditdir => (
+			is   => 'ro', # this should never change after creation surely? :thinkingface:
+			lazy => 1,
 
-		#straight copy Toolbox::FileSystem::buildtmpdirpath... which lead to it being refactord :dappershark:
-		default => sub {
+			#straight copy Toolbox::FileSystem::buildtmpdirpath... which lead to it being refactord :dappershark:
+			default => sub {
 
-			my ( $self ) = @_;
-			my $path = $self->buildtimepath( $self->auditroot() );
-			$self->mkpath( $path );
-			return $path;
-		}
+				my ( $self ) = @_;
+				my $path = $self->buildtimepath( $self->auditroot() );
+				$self->mkpath( $path );
+				return $path;
+			}
 
-	);
+		);
 
-	has sessiontoken => ( is => 'rw', );
-	has logfilepath => (
-		is      => 'rw',
-		lazy    => 1,
-		default => sub {
-			my ( $self ) = @_;
-			return $self->auditdir() . '/activity.log';
-		}
-	);
-	has logfilehandle => (
-		is      => 'rw',
-		lazy    => 1,
-		default => sub {
-			my ( $self ) = @_;
-			open( my $fh, ">:encoding(UTF-8)", $self->logfilepath() ) or confess( "Failed to open logfile! : $!" );
+		has logfilepath => (
+			is      => 'rw',
+			lazy    => 1,
+			default => sub {
+				my ( $self ) = @_;
+				return $self->auditdir() . '/activity.log';
+			}
+		);
+		has logfilehandle => (
+			is      => 'rw',
+			lazy    => 1,
+			default => sub {
+				my ( $self ) = @_;
+				open( my $fh, ">:encoding(UTF-8)", $self->logfilepath() ) or confess( "Failed to open logfile! : $!" );
 
-			#Cargo Cultin'
-			my $h = select( $fh );
-			$| = 1;
-			select( $h );
+				#Cargo Cultin'
+				my $h = select( $fh );
+				$| = 1;
+				select( $h );
 
-		}
+			}
 
-	);
+		);
+	}
 
 } #/ACCESSORS
 
@@ -85,7 +96,7 @@ sub auditedrequest {
 
 	#cargo cultin'
 	$req->header(
-		'Version'      => 2,
+		'Version' => $p->{version} || 2,
 		'X-IG-API-KEY' => $self->key(),
 		'Content-Type' => 'application/json; charset=UTF-8',
 		'Accept'       => 'application/json; charset=UTF-8',
@@ -117,6 +128,9 @@ sub auditedrequest {
 		close( $responsefh );
 	}
 	if ( $result->{_rc} != 200 ) {
+		if ( $result->{_content} ) {
+			$self->log( $result->{_content} );
+		}
 		$self->log( "Request failed - check audit for cause" );
 		exit;
 	}
@@ -160,7 +174,59 @@ sub login {
 		}
 	);
 
-	my $decodedres = $self->json->decode( $res->{_content} );
+	$self->accountstatus( $self->json->decode( $res->{_content} ) );
+
+	$self->securitytoken( $res->{_headers}->{'x-security-token'} );
+	$self->log( "Got security token value [$res->{_headers}->{'x-security-token'}]" );
+	$self->cst( $res->{_headers}->{cst} );
+	$self->log( "Got cst value [$res->{_headers}->{cst}]" );
+	my $now = time;
+	$self->cstage( $now );
+	$self->securitytokenage( $now );
+
+}
+
+=head3 getepic
+	get the IG trading platform unique value for a $something
+=cut
+
+sub getepics {
+	my ( $self, $search ) = @_;
+
+	my $res = $self->auditedrequest(
+		{
+			url     => $self->rooturl() . "/markets?searchTerm=$search",
+			type    => 'GET',
+			version => 1,
+		},
+		undef,
+		$self->authheaders()
+	);
+	print Dumper( $res );
+
+}
+
+sub getepicdetail {
+	my ( $self, $epiccode ) = @_;
+
+	my $res = $self->auditedrequest(
+		{
+			url     => $self->rooturl() . "/markets/$epiccode",
+			type    => 'GET',
+			version => 1,
+		},
+		undef,
+		$self->authheaders()
+	);
+	print Dumper( $res );
+}
+
+sub snakeuuid {
+	my ( $self ) = @_;
+	my $uuid = substr( $self->getuuid(), undef, 29 );
+
+	$uuid =~ s|-|_|g;
+	return $uuid;
 }
 
 sub order {
@@ -169,8 +235,9 @@ sub order {
 	#default-able
 	my $orderbody = {
 		currencyCode  => $p->{currency}      || $self->currency(),
-		dealReference => $p->{dealreference} || $self->getuuid(),
-		timeInForce => ( $p->{timeinforce} ? $p->{timeinforce} : 'GOOD_TILL_CANCELLED' ),
+		dealReference => $p->{dealReference} || $self->snakeuuid(),
+		timeInForce => ( $p->{timeInForce} ? $p->{timeInForce} : 'GOOD_TILL_CANCELLED' ),
+		type => ( $p->{type} && $p->{type} eq 'STOP' ) ? 'STOP' : 'LIMIT'
 	};
 
 	REQUIRED: {
@@ -180,6 +247,7 @@ sub order {
 			epic
 			size
 			level
+			expiry
 			/
 		  )
 		{
@@ -197,6 +265,22 @@ sub order {
 		#when to carry out the order (?)
 		$orderbody->{level} = $p->{level};
 
+		#when expires - not sure why this is here
+		$orderbody->{expiry} = $p->{expiry};
+
+		#when expires - not sure why this is here
+
+	}
+
+	#BOOLEAN
+	for (
+		qw/
+		forceOpen
+		guaranteedStop
+		/
+	  )
+	{
+		$orderbody->{$_} = $p->{$_} ? JSON::true : JSON::false;
 	}
 
 	#optional - but stopDistance is required ;\
@@ -207,6 +291,7 @@ sub order {
 		stopDistance
 		stopLevel
 		limitLevel
+
 		/
 	  )
 	{
@@ -223,10 +308,45 @@ sub order {
 
 	$self->auditedrequest(
 		{
-			type => url => $self->rooturl() . '/workingorders/otc',
+			url  => $self->rooturl() . '/workingorders/otc',
+			type => 'POST',
 		},
-		$orderbody
+		$orderbody,
+		$self->authheaders()
 	);
+
+}
+
+sub listorders {
+	my ( $self ) = @_;
+	$self->auditedrequest(
+		{
+			url  => $self->rooturl() . '/workingorders',
+			type => 'GET',
+		},
+		undef,
+		$self->authheaders()
+	);
+
+}
+
+=head3 authheaders
+	return the current correct auth headers or HCF
+=cut
+
+sub authheaders {
+	my ( $self ) = @_;
+	my $maxold = ( time - 57 );
+	if ( $self->cstage() <= $maxold ) {
+		$self->logexit( 'CST is too old' );
+	}
+	if ( $self->securitytokenage() <= $maxold ) {
+		$self->logexit( 'Security token is too old' );
+	}
+	return {
+		'x-security-token' => $self->securitytoken(),
+		cst                => $self->cst()
+	};
 
 }
 
@@ -253,6 +373,12 @@ sub log {
 
 }
 
+sub logquit {
+	my ( $self, $msg ) = @_;
+	$self->log( $msg );
+	exit;
+}
+
 1;
 
 package main;
@@ -273,6 +399,27 @@ sub main {
 	);
 	my $self = IGAPI->new( $conf );
 	$self->login();
+
+	# 	$self->getepic( 'US 500' );
+	# 	$self->getepicdetail('IX.D.SPTRD.DAILY.IP');
+
+	$self->order(
+		{
+			direction => 'SELL',
+			epic      => 'AA.D.FLT.DAILY.IP',
+			size      => '-0.01',
+			level     => '1613.00',
+			"expiry"  => "DFB",
+
+			# 		forceOpen => 1,
+
+			limitDistance => 1,
+			stopDistance  => 5,
+
+		}
+	);
+
+	# 	$self->listorders();
 
 	$self->log( 'finished' );
 }
