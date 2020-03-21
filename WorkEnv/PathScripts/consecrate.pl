@@ -7,7 +7,7 @@ sub main {
 	my ( $bulk_args, $path_args );
 	if ( scalar( @_ ) > 1 ) {
 		require Toolbox::CombinedCLI;
-		my $conf = Toolbox::CombinedCLI::get_config( [qw/ directory /], [qw/increment set /] );
+		my $conf      = Toolbox::CombinedCLI::get_config( [qw/ directory /], [qw/increment set /] );
 		my $bulk_args = join( ' ', @_ );
 		$path_args = "$conf->{directory}";
 	} else {

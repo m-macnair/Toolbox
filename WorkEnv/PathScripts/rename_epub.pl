@@ -16,8 +16,7 @@ sub main {
 	try {
 		my $ep = EPUB::Parser->new;
 		$ep->load_file( {file_path => $file} );
-	}
-	catch {
+	} catch {
 		warn "\t[$file] is probably not an epub";
 		exit;
 	};

@@ -74,8 +74,8 @@ sub process_tmp {
 				return if -l ( $path );
 
 				#active tmps
-				return if ( -M $path ) < 1;
-				return process_dir( $path ) if -d ( $path );
+				return                             if ( -M $path ) < 1;
+				return process_dir( $path )        if -d ( $path );
 				return process_file( $path, $age ) if -f ( $path );
 				warn "No idea what to do with $path";
 			},
