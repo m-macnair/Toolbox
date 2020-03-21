@@ -18,7 +18,7 @@ use URI::Encode qw(uri_encode uri_decode);
 main();
 
 sub main {
-	my $cgi = CGI->new();
+	my $cgi    = CGI->new();
 	my $action = $cgi->param( 'action' ) || '';
 
 	print $cgi->header();
@@ -44,8 +44,7 @@ sub main {
 				warn "$action ne $safeaction";
 			}
 		}
-	}
-	catch {
+	} catch {
 		print "Unhandled error: $_";
 		exit;
 	};
@@ -65,7 +64,7 @@ sub defaultaction {
 		}
 	);
 	my $map = _parsemap( "./keymap.json", "&file=$file" );
-	my $ui = $jsd->generateinterface(
+	my $ui  = $jsd->generateinterface(
 		{
 			urlmap       => $map,
 			jsformapconf => {
@@ -81,7 +80,7 @@ sub defaultaction {
 		push( @keyhelperstack, "<span> $key > $target </span>" );
 	}
 	my $keyhelperstring = join( '|', @keyhelperstack );
-	my $fileurl = uri_encode( $file );
+	my $fileurl         = uri_encode( $file );
 
 	print qq|
 		<html>
@@ -123,8 +122,7 @@ sub kamove {
 
 	try {
 		Toolbox::FileSystem::safemvf( $actual_file, "$target/" );
-	}
-	catch {
+	} catch {
 		if ( index( $_, '] already exists' ) != -1 ) {
 			$exists = 1;
 			warn "existing file";

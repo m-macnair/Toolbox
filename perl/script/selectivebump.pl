@@ -58,7 +58,7 @@ sub main {
 		print "\tdigest position : $digestline$/";
 		print "\tversion position : $versionline$/";
 		my $digestbuffer = join( '', splice( @writebuffer, $digestline ) );
-		my $md5 = Digest::MD5->new;
+		my $md5          = Digest::MD5->new;
 		$md5->add( $digestbuffer );
 		my $digest = $md5->hexdigest();
 		unless ( $od && ( $od eq $digest ) ) {

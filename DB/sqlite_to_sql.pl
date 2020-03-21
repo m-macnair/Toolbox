@@ -84,7 +84,7 @@ sub get_insert_sth {
 		# 		warn $phstring;
 		my $qstring = "insert into $name ( $keystring ) values ($phstring)";
 
-		$persist->{$name}->{sth} = $persist->{dbh}->prepare( $qstring );
+		$persist->{$name}->{sth}    = $persist->{dbh}->prepare( $qstring );
 		$persist->{$name}->{'keys'} = \@keys;
 	}
 	return ( $persist->{$name}->{sth}, $persist->{$name}->{'keys'} );

@@ -5,9 +5,9 @@ package Toolbox::JSON;
 use Try::Tiny;
 require Exporter;
 use Carp qw/confess croak/;
-our $VERSION = 'v1.0.2';
+our $VERSION = 'v1.0.3';
 
-##~ DIGEST : 075c7a6ad05449da4080accfa96d24a9
+##~ DIGEST : 365c0301e73f1bee576e06f2cbd9396d
 
 our @EXPORT = qw/
   jsonloadfile
@@ -30,8 +30,7 @@ sub jsonloadfile {
 		}
 		close( $fh );
 		JSON::decode_json( $buffer );
-	}
-	catch {
+	} catch {
 		confess( "Failed - $_" );
 	};
 

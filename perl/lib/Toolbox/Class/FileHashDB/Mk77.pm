@@ -1,6 +1,6 @@
 package Toolbox::Class::FileHashDB::Mk77;
-our $VERSION = 'v1.0.2';
-##~ DIGEST : ba621d4ed078ede0db823e9bfdb54af6
+our $VERSION = 'v1.0.3';
+##~ DIGEST : 68df3e0dcf38dc2f2d7ecc31b552c774
 use Moo;
 with(
 	qw/
@@ -359,7 +359,7 @@ sub initdirweight {
 	$dirliststh->execute();
 	while ( my $row = $dirliststh->fetchrow_hashref() ) {
 		my @slashes = split( $self->directory_separator, $row->{name} );
-		my $weight = scalar( @slashes );
+		my $weight  = scalar( @slashes );
 		print "\t [$row->{name}] weighted as [$weight]$/" if $clv->{vocal};
 		$setweightsth->execute( $weight, $row->{id} );
 		$self->commitmaybe();

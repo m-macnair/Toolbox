@@ -57,7 +57,7 @@ sub main {
 			$offsets->[$offset]->{properties}->{$name} ||= {};
 			my $target = $offsets->[$offset]->{properties}->{$name};
 
-			$target->{type} = $type;
+			$target->{type}        = $type;
 			$target->{description} = $desc if $desc;
 			push( @{$offsets}, $target );
 

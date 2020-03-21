@@ -2,9 +2,9 @@ use strict;
 use warnings;
 
 package Toolbox::Class::JSDispatch;
-our $VERSION = 'v1.0.1';
+our $VERSION = 'v1.0.2';
 
-##~ DIGEST : a09c01717e3983becf740c13e76b3ae6
+##~ DIGEST : 05a9f00fa8d2a0f48ac1e73ba4ae977c
 
 # init
 sub new {
@@ -12,7 +12,7 @@ sub new {
 	my ( $proto, $conf ) = @_;
 	$conf ||= {};
 	my $class = ref( $proto ) || $proto;
-	my $self = bless {}, $class;
+	my $self  = bless {}, $class;
 
 	$self->{keymap} = $self->_key_to_code();
 

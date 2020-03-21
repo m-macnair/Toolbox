@@ -1,7 +1,7 @@
 package Toolbox::FileVersion;
-our $VERSION = 'v1.0.1';
+our $VERSION = 'v1.0.2';
 
-##~ DIGEST : 921c89ff5cfb0e95d9dfbda9223e3bf1
+##~ DIGEST : f3b912e6811fb07b0cc05117f9823921
 use Moo;
 use Toolbox::CombinedCLI;
 use Toolbox::FileSystem;
@@ -55,7 +55,7 @@ sub digest_source_file {
 		print "\tdigest position : $digestline$/";
 		print "\tversion position : $versionline$/";
 		my $digestbuffer = join( '', splice( @writebuffer, $digestline ) );
-		my $md5 = Digest::MD5->new;
+		my $md5          = Digest::MD5->new;
 		$md5->add( $digestbuffer );
 		$return->{digest} = $md5->hexdigest();
 

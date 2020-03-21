@@ -5,7 +5,7 @@ use warnings;
 package Mk77;
 use parent qw/
   Toolbox::Class::FileHashDB::Mk77
-  Toolbox::Moo::Role::PID
+  Moo::Role::PID
   /;
 
 =head3 checkknown
@@ -32,7 +32,7 @@ main();
 # WARNING - need to make sure checknown and dir_or_dirs isn't disfunctional
 sub main {
 
-	my $clv = Toolbox::CombinedCLI::get_config( [ qw/dbfile /, [qw/ dirs dir /] ], [qw/ loadfirst initdb vocal markdeletes dodeletes /] );
+	my $clv  = Toolbox::CombinedCLI::get_config( [ qw/dbfile /, [qw/ dirs dir /] ], [qw/ loadfirst initdb vocal markdeletes dodeletes /] );
 	my $mk77 = Mk77->new( $clv );
 	$mk77->startpid();
 	my $loaded;

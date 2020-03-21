@@ -4,7 +4,7 @@ use warnings;
 package Mk77;
 use parent qw/
   Toolbox::Class::FileHashDB::Mk77
-  Toolbox::Moo::Role::PID
+  Moo::Role::PID
   /;
 
 =head3 checkknown

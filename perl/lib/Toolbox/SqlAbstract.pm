@@ -1,7 +1,7 @@
 package Toolbox::SqlAbstract;
-our $VERSION = 'v1.0.2';
+our $VERSION = 'v1.0.3';
 
-##~ DIGEST : 98f0c24291269bec8b65041667f232fe
+##~ DIGEST : 0da7a7af667e82cef5b3ab706d3ce13a
 
 #ABSTRACT: use DBI and SqlAbstract quickly - mainly to reinforce my knowledge of moo
 use Try::Tiny;
@@ -57,8 +57,7 @@ sub _shared_query {
 	my $sth = $self->dbh->prepare( $Q ) or die "failed to prepare statement :/";
 	try {
 		$sth->execute( @{$P} ) or die $!;
-	}
-	catch {
+	} catch {
 		require Data::Dumper;
 		require Carp;
 		Carp::confess( "Failed to execute ($Q) with parameters" . Data::Dumper::Dumper( \@{$P} ) );

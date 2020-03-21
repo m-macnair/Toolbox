@@ -4,9 +4,9 @@ use warnings;
 package Toolbox::FileSystem;
 
 # ABSTRACT: common filesystem-y things
-our $VERSION = 'v1.0.1';
+our $VERSION = 'v1.0.2';
 
-##~ DIGEST : 89d197b547c298fd7862170722e56832
+##~ DIGEST : 252f4921d9481afbd9c22e13f52e2926
 use Carp qw/ cluck confess /;
 
 use Exporter qw(import);
@@ -22,6 +22,7 @@ our @EXPORT_OK = qw(
   abspath
   mkpath
   safeduplicatepath
+  thisfile
 );
 
 =head3 checkpath

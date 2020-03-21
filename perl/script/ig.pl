@@ -1,8 +1,8 @@
 use strict;
 use warnings;
-our $VERSION = 'v1.0.10';
+our $VERSION = 'v1.0.12';
 
-##~ DIGEST : 0fd07a37febefb76a8dc3f08847b8cdb
+##~ DIGEST : 3264cfa6b26a9aaab9a75b9276277df5
 
 #IG trading platform API trial
 
@@ -10,11 +10,11 @@ package IGAPI;
 
 use Moo;
 with qw/
-  Toolbox::Moo::Role::UserAgent
-  Toolbox::Moo::Role::JSON
-  Toolbox::Moo::Role::FileSystem
-  Toolbox::Moo::Role::FileIO
-  Toolbox::Moo::Role::UUID
+  Moo::Role::UserAgent
+  Moo::Role::JSON
+  Moo::Role::FileSystem
+  Moo::Role::FileIO
+  Moo::Role::UUID
   /;
 use Time::HiRes qw/gettimeofday/;
 use Data::Dumper;
@@ -40,7 +40,7 @@ ACCESSORS: {
 	}
 	AUDIT: {
 		has auditroot => ( is => 'rw' );
-		has auditdir => (
+		has auditdir  => (
 			is   => 'ro', # this should never change after creation surely? :thinkingface:
 			lazy => 1,
 
@@ -96,7 +96,7 @@ sub auditedrequest {
 
 	#cargo cultin'
 	$req->header(
-		'Version' => $p->{version} || 2,
+		'Version'      => $p->{version} || 2,
 		'X-IG-API-KEY' => $self->key(),
 		'Content-Type' => 'application/json; charset=UTF-8',
 		'Accept'       => 'application/json; charset=UTF-8',
@@ -237,7 +237,7 @@ sub order {
 		currencyCode  => $p->{currency}      || $self->currency(),
 		dealReference => $p->{dealReference} || $self->snakeuuid(),
 		timeInForce => ( $p->{timeInForce} ? $p->{timeInForce} : 'GOOD_TILL_CANCELLED' ),
-		type => ( $p->{type} && $p->{type} eq 'STOP' ) ? 'STOP' : 'LIMIT'
+		type        => ( $p->{type} && $p->{type} eq 'STOP' ) ? 'STOP' : 'LIMIT'
 	};
 
 	REQUIRED: {

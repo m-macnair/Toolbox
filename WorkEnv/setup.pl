@@ -8,15 +8,36 @@ use File::Basename;
 main( @ARGV );
 
 sub main {
-	my ( $allowed_user ) = @_;
-	$allowed_user ||= 'm';
-	unless ( $allowed_user eq $ENV{USER} ) {
-		warn "You are not $allowed_user - some actions will be skipped";
+	my ( $me ) = @_;
+	$me ||= 'm';
+	unless ( $me eq $ENV{USER} ) {
+		warn "You are not $me - some actions will be skipped";
 	}
-	$allowed_user = $allowed_user eq $ENV{USER};
+	$me = $me eq $ENV{USER};
 	my $thisfile = Cwd::abs_path( __FILE__ );
 	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $thisfile );
+
+	#parent directory of this file's parent directory
 	my $tbdir = Cwd::abs_path( dirname( $thisdir ) );
+
+	#parent directory of this file's parent directory's parent directory
+	my $gitdir = Cwd::abs_path( dirname( $tbdir ) );
+
+	my @perllibs;
+
+	GIT: {
+		`git config --global credential.helper cache`;
+		`git config --global credential.helper 'cache --timeout=36000'`;
+		if ( $me ) {
+
+			#set vi by default
+		}
+
+		#Moo::Role repo
+		`git clone https://github.com/m-macnair/Moo-Role.git $gitdir/Moo-Role`;
+		push( @perllibs, "$gitdir/Moo-Role/lib/" );
+
+	}
 
 	BASH: {
 		BASHPROFILE: {
@@ -42,12 +63,20 @@ sub main {
 
 			#append
 			`echo 'export PATH="\$PATH:$thisdir/PathScripts"' >> $thisdir/Bash/bash_source.sh`;
-			`echo 'export PERL5LIB="\$PERL5LIB:$tbdir/perl/lib/"' >> $thisdir/Bash/bash_source.sh`;
+
 			`cat $thisdir/Bash/bash_source_baseline.txt >> $thisdir/Bash/bash_source.sh`;
 
-			# TODO moar
+			push( @perllibs, "$tbdir/perl/lib/" );
+
+			PERLLIBS: {
+				my $perllibstr = join( ':', @perllibs );
+				`echo 'export PERL5LIB="\$PERL5LIB:$perllibstr"' >> $thisdir/Bash/bash_source.sh`;
+			}
 		}
+
+		# TODO moar
 	}
+
 	PERL: {
 		#connect perltidy if there isn't one already
 		my $pt = "$ENV{HOME}/.perltidyrc";
@@ -60,14 +89,6 @@ sub main {
 			} else {
 				warn "perltidyrc [$tpt] could not be found!";
 			}
-		}
-	}
-	GIT: {
-		`git config --global credential.helper cache`;
-		`git config --global credential.helper 'cache --timeout=36000'`;
-		if ( $allowed_user ) {
-
-			#set vi by default
 		}
 	}
 
@@ -88,6 +109,7 @@ sub main {
 			}
 
 		}
+
 	}
 }
 

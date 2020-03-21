@@ -1,9 +1,9 @@
 package Toolbox::Class::CodeVersion;
 
 # ABSTRACT : Modify version numbers for perl files based on digests of the file after the version string
-our $VERSION = 'v1.0.1';
+our $VERSION = 'v1.0.2';
 
-##~ DIGEST : 7880de6fbe8d5472ea9603bb9bb97e37
+##~ DIGEST : 33548dd4a1d2550cef88f189513bfdcb
 use Moo;
 
 ACCESSORS: {
@@ -141,7 +141,7 @@ sub digest_source_file {
 		$return->{output} .= "\tDigest Position : $digestline$/";
 		$return->{output} .= "\tVersion Position : $versionline$/";
 		my $digestbuffer = join( '', splice( @writebuffer, $digestline ) );
-		my $md5 = Digest::MD5->new;
+		my $md5          = Digest::MD5->new;
 		$md5->add( $digestbuffer );
 		my $digest = $md5->hexdigest();
 		if ( $od ) {

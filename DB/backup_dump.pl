@@ -30,8 +30,8 @@ sub main {
 		$dumpprefix .= " -P $C->{port} ";
 	}
 
-	my $dbh = DBI->connect( $dsn, $C->{user}, $C->{pass} );
-	my $port       = $C->{port}       || 3306;
+	my $dbh        = DBI->connect( $dsn, $C->{user}, $C->{pass} );
+	my $port       = $C->{port} || 3306;
 	my @exceptions = $C->{exceptions} || [];
 	my $sth        = $dbh->prepare( "show tables" );
 	$sth->execute();

@@ -1,0 +1,2 @@
+Naming Convention : 
+<service>.<element>.<project-identifier>.<variant>
