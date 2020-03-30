@@ -1,9 +1,14 @@
 #!/usr/bin/perl
 # ABSTRACT : A web page to sort files in the current directory using arrow keys
+
+our $VERSION = 'v1.0.1';
+
+##~ DIGEST : 915426f4070bb7e8507388dc32ffca8a
 use strict;
+
 use warnings;
 use lib '/home/m/git/Toolbox/perl/lib/';
-use CGI qw/ fatals_to_browser/;
+use CGI;
 use File::Find::Rule;
 
 use Toolbox::Class::JSDispatch;
@@ -120,6 +125,10 @@ sub kamove {
 	my $actual_file = Toolbox::FileSystem::abspath( "$dir/$file" );
 	my $exists;
 
+	# TODO create directory automatically
+	unless ( -d $target ) {
+		Toolbox::FileSystem::mkpath( Toolbox::FileSystem::abspath( $target ) );
+	}
 	try {
 		Toolbox::FileSystem::safemvf( $actual_file, "$target/" );
 	} catch {
@@ -178,7 +187,8 @@ sub _getfile {
 	$dir ||= './';
 	my $found;
 	opendir( DIR, $dir ) or die $!;
-	while ( my $file = readdir( DIR ) ) {
+	my @files = sort( readdir( DIR ) );
+	for my $file ( @files ) {
 		my ( $name, $path, $suffix ) = File::Basename::fileparse( $file, qr/\.[^.]*/ );
 		for my $ftype (
 			qw/
@@ -186,6 +196,7 @@ sub _getfile {
 			png
 			gif
 			jpeg
+
 			/
 		  )
 		{
