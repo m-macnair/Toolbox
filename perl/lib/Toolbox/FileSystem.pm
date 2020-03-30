@@ -9,6 +9,7 @@ our $VERSION = 'v1.0.2';
 ##~ DIGEST : 252f4921d9481afbd9c22e13f52e2926
 use Carp qw/ cluck confess /;
 
+our $TEMPDIR;
 use Exporter qw(import);
 our @EXPORT_OK = qw(
   checkpath
@@ -23,6 +24,7 @@ our @EXPORT_OK = qw(
   mkpath
   safeduplicatepath
   thisfile
+  tempdir
 );
 
 =head3 checkpath
@@ -144,6 +146,31 @@ sub safeduplicatepath {
 	return $path;
 
 }
+
+sub tempdir {
+	unless ($TEMPDIR){
+		my (  $root ) = @_;
+		$root ||= './';
+		$root = abspath($root);
+		$TEMPDIR = buildtimepath($root) ;
+		mkpath($TEMPDIR);
+	}
+
+	return $TEMPDIR;
+
+}
+
+
+sub buildtimepath {
+	my (  $root ) = @_;
+	checkdir( $root );
+	require Data::UUID;
+	my $ug      = Data::UUID->new;
+	my $uuid    = lc( $ug->create_str() );
+	my $tmppath = POSIX::strftime( "/%Y-%m-%d/%H/%M:%S/", gmtime() );
+	return abspath( "$root/$tmppath/$uuid/" );
+}
+
 
 sub cpf {
 	my ( $source, $target ) = _shared_fc( @_ );
