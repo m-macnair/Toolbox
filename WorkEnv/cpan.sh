@@ -1,1 +1,1 @@
-cpan File::Find::Rule
+cpan File::Find::Rule Data::UUID
