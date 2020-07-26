@@ -6,6 +6,7 @@ use EPUB::Parser;
 use File::Copy qw/mv /;
 use Try::Tiny;
 
+#rename gutenberg (etc) epubs from their catalogue number to title
 main( @ARGV );
 
 sub main {
