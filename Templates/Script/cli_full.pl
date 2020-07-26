@@ -5,5 +5,5 @@ use Toolbox::CombinedCLI;
 main();
 
 sub main {
-	my $clv = SubSystem::CLIHelper::array_config();
+	my $clv = Toolbox::CombinedCLI::get_config();
 }

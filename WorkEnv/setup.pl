@@ -8,12 +8,7 @@ use File::Basename;
 main( @ARGV );
 
 sub main {
-	my ( $me ) = @_;
-	$me ||= 'm';
-	unless ( $me eq $ENV{USER} ) {
-		warn "You are not $me - some actions will be skipped";
-	}
-	$me = $me eq $ENV{USER};
+
 	my $thisfile = Cwd::abs_path( __FILE__ );
 	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $thisfile );
 
@@ -28,14 +23,15 @@ sub main {
 	GIT: {
 		`git config --global credential.helper cache`;
 		`git config --global credential.helper 'cache --timeout=36000'`;
-		if ( $me ) {
+		`chmod 0700 /home/$ENV{USER}/.git-credential-cache`;
 
-			#set vi by default
-		}
-
-		#Moo::Role repo
+		#Moo::Role repo (obsolete)
 		`git clone https://github.com/m-macnair/Moo-Role.git $gitdir/Moo-Role`;
 		push( @perllibs, "$gitdir/Moo-Role/lib/" );
+
+		#Moo::GenericRole repo
+		`git clone https://github.com/m-macnair/Moo-GenericRole.git $gitdir/Moo-GenericRole`;
+		push( @perllibs, "$gitdir/Moo-GenericRole/lib/" );
 
 	}
 

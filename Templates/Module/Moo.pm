@@ -1,6 +1,9 @@
-use strict; # applies to all packages defined in the file
-
+use strict;
 package Some::Module;
+our $VERSION = '0.04';
+##~ DIGEST : 516777ae87b5a961e3a5cacec775c399
+
+
 use 5.006;
 use warnings;
 
@@ -14,9 +17,7 @@ use warnings;
 		<actions>
 =cut
 
-our $VERSION = '0.04';
 
-##~ DIGEST : 516777ae87b5a961e3a5cacec775c399
 
 =head1 SYNOPSIS
 	TODO

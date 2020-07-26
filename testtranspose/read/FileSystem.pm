@@ -6,7 +6,7 @@ package Toolbox::FileSystem;
 # ABSTRACT: common filesystem-y things
 our $VERSION = 'v1.0.3';
 
-##~ DIGEST : 5aeccc52d8412a2c5a1ff5a6c2b6f0fb
+##~ DIGEST : e7187c3d760fb9a22865bf5124dbc8a0
 use Carp qw/ cluck confess /;
 
 our $TEMPDIR;
@@ -32,27 +32,31 @@ our @EXPORT_OK = qw(
 =cut
 
 sub checkpath {
+	##!<-<checkpath>
 	my ( $path, $vname ) = @_;
 	$vname = _vname( $vname );
 	confess( "checkpath $vname value is null" ) unless $path;
 	confess( "checkpath $vname path [$path] does not exist" ) unless -e $path;
 	return 1;
-
+	##!<-</checkpath>
 }
 
 sub checkfile {
 	my ( $path, $vname ) = @_;
+	##!<-<checkfile>
 	$vname = _vname( $vname );
 	checkpath( $path, $vname );
 	confess( "checkfile $vname path [$path] is not a file " ) unless -f $path;
+	##!<-</checkfile>
 }
 
 sub checkdir {
 	my ( $path, $vname ) = @_;
+	##!<-<checkdir>
 	$vname = _vname( $vname );
 	checkpath( $path, $vname );
 	confess( "checkdir $vname path [$path] is not a directory " ) unless -d $path;
-
+	##!<-</checkdir>
 }
 
 sub filebasename {
@@ -67,9 +71,11 @@ sub filebasename {
 
 sub filepathparts {
 	my ( $path ) = @_;
+	##!<-<filepathparts>
 	require File::Spec;
 	my ( $dev, $dir, $file ) = File::Spec->splitpath( $path );
 	return ( $file, $dir, $dev );
+	##!<-</filepathparts>
 }
 
 sub _vname {

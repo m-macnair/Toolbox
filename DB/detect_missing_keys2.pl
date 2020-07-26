@@ -10,13 +10,17 @@ main();
 
 sub main {
 	my $c = Toolbox::CombinedCLI::get_config(
-		[qw/
-			columnfile
-			dsnarray
-		/],
-		[qw/
-		
-		/]
+		[
+			qw/
+			  columnfile
+			  dsnarray
+			  /
+		],
+		[
+			qw/
+
+			  /
+		]
 	);
 	Toolbox::FileSystem::checkfile( $c->{columnfile} );
 	my @lines = File::Slurp::read_file( $c->{columnfile} );
@@ -29,14 +33,12 @@ sub main {
 		push( @index_columns, $line );
 	}
 
-	
 	my $dbh = DBI->connect( @{$c->{dsnarray}} );
-	
 
 	# TODO skip tables
 	my @stmnts;
 	for my $table ( @{$dbh->selectcol_arrayref( "show tables" )} ) {
-		
+
 		my $index_map = {};
 
 		my $describe_sth = $dbh->prepare( "describe $table" );
