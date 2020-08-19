@@ -7,8 +7,10 @@ use Toolbox::Class::FileHashDB::Mk77;
 main( @ARGV );
 
 sub main {
+
 	my ( $path ) = @_;
 	die "not risking a dedupe of working directory" unless $path;
 	my $fhdb = Toolbox::Class::FileHashDB::Mk77->new();
 	$fhdb->criticalpath3( $path );
+
 }

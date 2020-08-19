@@ -3,20 +3,18 @@
 use strict;
 use warnings;
 use Data::Dumper;
-
 use File::Find::Rule;
 use File::Copy;
 main( @ARGV );
 
 sub main {
+
 	my ( $dir ) = @_;
 	die "No directory provided!" unless $dir;
 	die "Directory [$dir] not found" unless -d $dir;
-
 	my @pmlist = File::Find::Rule->file()->name( "*.pm" )->in( $dir );
 	my $submap = {};
 	for my $path ( @pmlist ) {
-
 		open( my $fh, '<:raw', $path )
 		  or die "failed to open file [$path] : $!";
 
@@ -24,7 +22,6 @@ sub main {
 		while ( my $line = <$fh> ) {
 			next unless index( $line, '_' ) != -1;
 			next unless index( $line, 'sub ' ) == 0;
-
 			my $prefix = '';
 			if ( index( $line, 'sub _' ) == 0 ) {
 				$prefix = '_';
@@ -39,11 +36,9 @@ sub main {
 		}
 		close( $fh );
 	}
-
 	warn Dumper( $submap );
 
 	# 	sleep 10 + scalar(keys(%{$submap}));
-
 	my @pllist = File::Find::Rule->file()->name( "*.pl" )->in( $dir );
 	for my $path ( @pmlist, @pllist ) {
 		my $backup = "$path.prereplace_" . time;
@@ -65,10 +60,8 @@ sub main {
 				if ( $line =~ m/(!?$)$bs(?!\()/ ) {
 					warn "Potentially missed sub call of $bs -> $gs \n\ton line $lc of $path : $line";
 				}
-
 			}
 			print $ofh $line;
-
 		}
 		close( $ifh );
 		close( $ofh );

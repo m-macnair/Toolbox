@@ -7,10 +7,10 @@ use Toolbox::PathScripts;
 main( @ARGV );
 
 sub main {
+
 	my ( $target ) = @_;
 	$target ||= './';
-
 	my $tdir = gettdir( __FILE__ );
-
 	print `cp -ruv $tdir/RepoStructure/* $target`;
+
 }

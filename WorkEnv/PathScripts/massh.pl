@@ -13,10 +13,10 @@ DEPENDENCIES: {
 main();
 
 sub main() {
-	precheck();
 
-	my $commandlist = promptforfile( 'Enter command list file', [qw# ./commandlist.csv ./mash_commands.csv# ] );
-	my $hostlist    = promptforfile( 'Enter host file',         [qw# ./hostlist.csv ./mash_hosts.csv # ]);
+	precheck();
+	my $commandlist = promptforfile( 'Enter command list file', [qw# ./commandlist.csv ./mash_commands.csv#] );
+	my $hostlist    = promptforfile( 'Enter host file',         [qw# ./hostlist.csv ./mash_hosts.csv #] );
 	my $user = prompt( 'enter user', $ENV{USER} );
 	my $pass = prompt( 'enter pass', undef, {hidden => 1} );
 
@@ -36,38 +36,30 @@ sub main() {
 				path  => $hostlist,
 				'sub' => sub {
 					my ( $row, $rownum, $continue ) = @_;
-					my $host = join('',@{$row});
-					chomp($host);
-					return unless($host);
-					
+					my $host = join( '', @{$row} );
+					chomp( $host );
+					return unless ( $host );
 					my $options = {
-						user => $user, 
-						password => $pass, 
-						
+						user     => $user,
+						password => $pass,
 					};
-					single_ssh($host,$options);
-					
+					single_ssh( $host, $options );
 					if ( $knownhostsbuffer =~ m/$row->[0]/ ) {
-# 						print "HOST: Known; $row->[0]$/";
+
+						# 						print "HOST: Known; $row->[0]$/";
 					} else {
 						`ssh-keyscan -H $row->[0] >> $ENV{HOME}/.ssh/known_hosts`;
 						print "HOST: Unknown; $row->[0]$/";
 					}
 
 					#non hrefs still cause me distress
-					$pssh->add_host( $row->[0],%$options, on_error => OSSH_ON_ERROR_ABORT_ALL  );
-
+					$pssh->add_host( $row->[0], %$options, on_error => OSSH_ON_ERROR_ABORT_ALL );
 				}
 			}
 		);
 	}
-
 	print $/;
 	SETUPCOMMANDS: {
-	
-		
-	
-	
 		processcsv(
 			{
 				path  => $commandlist,
@@ -90,41 +82,33 @@ sub main() {
 			}
 		);
 	}
-
 	$pssh->run;
 	use Data::Dumper;
-	my $errors = [ $pssh->get_errors];
-
-	if(@{$errors}){
-		while(@{$errors}){
-			my ($host,$error) = (shift(@{$errors}),shift(@{$errors}));
+	my $errors = [ $pssh->get_errors ];
+	if ( @{$errors} ) {
+		while ( @{$errors} ) {
+			my ( $host, $error ) = ( shift( @{$errors} ), shift( @{$errors} ) );
 			print "ERROR:\t$host\t:\t$error$/";
 		}
-	} else{ 
-		print "STATUS: No errors$/";	
+	} else {
+		print "STATUS: No errors$/";
 	}
 	print "STATUS: Complete!$/";
+
 }
 
+sub precheck {
 
-sub precheck { 
-
-
-
-	my @paths = (
-		$ENV{HOME},
-		"$ENV{HOME}.libnet-openssh-perl/",
-	);
-	for my $path (@paths){
-		
-		my $info    = File::stat::stat($path) or die "Failed to stat $path! : $!";
-		my $mode = substr(sprintf("04%o", ($info->mode & 07777)),3);
-		my ($group,$world) = split(//,$mode);
-		if(($group > 5) or  ($world > 5)){
+	my @paths = ( $ENV{HOME}, "$ENV{HOME}.libnet-openssh-perl/", );
+	for my $path ( @paths ) {
+		my $info = File::stat::stat( $path ) or die "Failed to stat $path! : $!";
+		my $mode = substr( sprintf( "04%o", ( $info->mode & 07777 ) ), 3 );
+		my ( $group, $world ) = split( //, $mode );
+		if ( ( $group > 5 ) or ( $world > 5 ) ) {
 			die "OpenSSH will cause problems with $path!$/suggest chmod 755 $path$/";
 		}
-
 	}
+
 }
 
 sub prompt {
@@ -154,30 +138,31 @@ sub prompt {
 sub promptforfile {
 
 	my ( $prompt, $defaults, $opt ) = @_;
-	#go through all possible defaults and offer 
-	for my $file (@$defaults){
 
-		if(-f $file ){
-			
-			while(1){
+	#go through all possible defaults and offer
+	for my $file ( @$defaults ) {
+		if ( -f $file ) {
+			while ( 1 ) {
 				$file = prompt( $prompt, $file, $opt );
-				if ( -f $file ){
+				if ( -f $file ) {
 					return $file;
-				} else { 
+				} else {
 					print "file [$file] not found";
 				}
 			}
 		}
 	}
+
 	#no defaults left/supplied, so bitch for a file
-	while(1){
+	while ( 1 ) {
 		$file = prompt( $prompt, undef, $opt );
-		if ( -f $file ){
+		if ( -f $file ) {
 			return $file;
-		} else { 
+		} else {
 			print "file [$file] not found";
 		}
 	}
+
 }
 
 sub processcsv {
@@ -221,13 +206,11 @@ sub processcsv {
 
 }
 
-sub single_ssh  {
-	my ($host,$opts) = @_;
+sub single_ssh {
 
-	my $ssh =  Net::OpenSSH->new(
-		$host,
-		%$opts
-	);
+	my ( $host, $opts ) = @_;
+	my $ssh = Net::OpenSSH->new( $host, %$opts );
 	$ssh->error and die "Can't ssh to $host: " . $ssh->error;
 	return $ssh;
+
 }

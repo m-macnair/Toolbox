@@ -1,10 +1,8 @@
 #!/usr/bin/perl
-
 use strict;
 use warnings;
 use Toolbox::Class::CodeVersion;
 use Toolbox::CombinedCLI;
-
 main();
 
 =head1 ABSTRACT
@@ -18,9 +16,9 @@ main();
 =cut
 
 sub main {
-	my $conf = Toolbox::CombinedCLI::array_config( [qw/ path/], [qw/increment set mute /] );
 
-	my $cv = Toolbox::Class::CodeVersion->new();
+	my $conf = Toolbox::CombinedCLI::array_config( [qw/ path/], [qw/increment set mute /] );
+	my $cv   = Toolbox::Class::CodeVersion->new();
 	$cv->mmp( $conf->{path}, $conf );
 
 }

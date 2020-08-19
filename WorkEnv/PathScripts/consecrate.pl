@@ -4,6 +4,7 @@ use warnings;
 main( @ARGV );
 
 sub main {
+
 	my ( $bulk_args, $path_args );
 	if ( scalar( @_ ) > 1 ) {
 		require Toolbox::CombinedCLI;
@@ -17,9 +18,7 @@ sub main {
 			$bulk_args = $path_args = './';
 		}
 	}
-
 	system( "bulk_perl_file_prep.sh $bulk_args" );
 	system( "zap_directory.sh $path_args" );
 
 }
-

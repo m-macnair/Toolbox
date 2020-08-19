@@ -7,11 +7,10 @@ use JSON;
 main( @ARGV );
 
 sub main {
-	my ( $path ) = @_;
 
+	my ( $path ) = @_;
 	die "file [$path] not found" unless -f $path;
 	open( my $fh, '<:raw', $path ) or die "failed to open file [$path] : $!";
-
 	my $buffer;
 	while ( my $line = <$fh> ) {
 		chomp( $line );
@@ -23,4 +22,3 @@ sub main {
 	print $json->encode( $v ), $/;
 
 }
-

@@ -8,6 +8,7 @@ use File::Find;
 main( @ARGV );
 
 sub main {
+
 	my @dirs;
 	unless ( @dirs ) {
 		push( @dirs, '/tmp/' );
@@ -51,7 +52,6 @@ sub main {
 	`rm -Rf /tmp/slpkg/`;
 	`rm -Rf /tmp/SBo/`;
 	`rm -Rf /var/tmp/kdecache-*/krun/*`;
-
 	for my $d ( @dirs ) {
 		if ( ref( $d ) ) {
 			process_tmp( @{$d} );
@@ -59,14 +59,15 @@ sub main {
 			process_tmp( $d );
 		}
 	}
+
 }
 
 sub process_tmp {
+
 	my ( $dir, $age ) = @_;
 	warn $age;
 	die "[$dir] is not a directory" unless ( -d $dir );
 	require File::Find;
-
 	File::Find::find(
 		{
 			wanted => sub {
@@ -87,9 +88,11 @@ sub process_tmp {
 
 	# delete now empty directories
 	`find $dir -type d -depth -empty -delete`;
+
 }
 
 sub process_file {
+
 	my ( $path, $age ) = @_;
 	$age ||= 365;
 
@@ -107,16 +110,17 @@ sub process_file {
 		/
 	  )
 	{
-
 		if ( lc( substr( $path, -length( $filetype ) ) ) eq lc( $filetype ) ) {
 			unlink( $path );
 			return;
 		}
 	}
+
 }
 
 # specific directory handling for /tmp/
 sub process_dir {
+
 	my ( $path ) = @_;
 
 	#week old calc/libreoffice temp directories
@@ -126,10 +130,13 @@ sub process_dir {
 			return;
 		}
 	}
+
 }
 
 sub del_if_e {
+
 	my ( $path ) = @_;
 	return unless $path;
 	`rm -Rf $path` if -e $path;
+
 }

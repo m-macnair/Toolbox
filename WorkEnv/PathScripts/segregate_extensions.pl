@@ -8,6 +8,7 @@ use Data::Dumper;
 main( @ARGV );
 
 sub main {
+
 	my ( $dir ) = @_;
 	$dir ||= './';
 	use File::Find::Rule;
@@ -16,14 +17,11 @@ sub main {
 	my @files = File::Find::Rule->file->maxdepth( 1 )->in( $dir );
 	my $types = {};
 	for my $file ( @files ) {
-
 		my ( $name, $path, $suffix ) = fileparse( $file, qr/\.[^.]*/ );
-
 		next unless $name;  #suggests a hidden file;
 		next unless $suffix;
 		$suffix = lc( $suffix );
 		push( @{$types->{$suffix}}, Toolbox::FileSystem::abspath( $file ) );
-
 	}
 	for my $suffix ( keys( %{$types} ) ) {
 		my $segdir = $suffix;

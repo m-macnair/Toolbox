@@ -2,14 +2,14 @@
 use strict;
 use warnings;
 use Net::Wake;
-main(@ARGV);
+main( @ARGV );
 
 sub main {
 
-	my ($udpstr) = @_;
-	if ($udpstr) {
-		my @udps = split ( ',', $udpstr );
-		for my $udp (@udps) {
+	my ( $udpstr ) = @_;
+	if ( $udpstr ) {
+		my @udps = split( ',', $udpstr );
+		for my $udp ( @udps ) {
 			print "Waking $udp$/";
 			Net::Wake::by_udp( undef, $udp );
 		}

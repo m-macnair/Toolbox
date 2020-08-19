@@ -10,10 +10,9 @@ use Try::Tiny;
 main( @ARGV );
 
 sub main {
+
 	my ( $file ) = @_;
-
 	Toolbox::FileSystem::checkfile( $file );
-
 	try {
 		my $ep = EPUB::Parser->new;
 		$ep->load_file( {file_path => $file} );
@@ -21,12 +20,10 @@ sub main {
 		warn "\t[$file] is probably not an epub";
 		exit;
 	};
-
 	my $res = `exiftool -T -Title "$file"`;
 	$res =~ s|[ ]|_|g;
 	$res =~ s|__|_|g;
 	$res =~ s|[^A-Za-z0-9_]||g;
-
 	my $newname = "$res.epub";
 	if ( !$newname || $newname eq '.epub' ) {
 		warn "[$file] produced an unusable name";

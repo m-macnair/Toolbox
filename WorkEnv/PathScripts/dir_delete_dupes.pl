@@ -7,15 +7,16 @@ use File::Find::Rule;
 main( @ARGV );
 
 sub main {
-	my ( $safe, $burn ) = @_;
-	die "Safe directory [$safe] is not a directory" unless ( -d $safe );
-	die "Burn directory [$burn] is not a directory" unless ( -d $burn );
-	die " Same directory provided twice!"           unless ( $safe ne $burn );
 
+	my ( $safe, $burn ) = @_;
+	die "First Argument, Safe directory [$safe] is not a directory"  unless ( -d $safe );
+	die "Second Argument, Burn directory [$burn] is not a directory" unless ( -d $burn );
+	die "Same directory provided twice!"                             unless ( $safe ne $burn );
 	my @safelist = File::Find::Rule->file()->in( $safe );
 	my @burnlist = File::Find::Rule->file()->in( $burn );
 	my $safemap  = listtomap( \@safelist );
 	my $burnmap  = listtomap( \@burnlist );
+
 	for my $kept ( keys( %{$safemap} ) ) {
 		if ( $burnmap->{$kept} ) {
 			for my $burnfile ( @{$burnmap->{$kept}} ) {
@@ -23,9 +24,11 @@ sub main {
 			}
 		}
 	}
+
 }
 
 sub listtomap {
+
 	my ( $listarref ) = @_;
 	my $return;
 	for my $file ( @{$listarref} ) {
@@ -37,8 +40,8 @@ sub listtomap {
 }
 
 sub md5binfile {
-	my ( $file ) = @_;
 
+	my ( $file ) = @_;
 	open( my $fh, '<', $file ) or return {fail => "Can't open [$file]: $!"};
 	binmode( $fh );
 	my $md5 = Digest::MD5->new;
@@ -47,11 +50,14 @@ sub md5binfile {
 	}
 	close( $fh );
 	return {pass => $md5->digest, md5o => $md5};
+
 }
 
 sub md5hexfile {
+
 	my ( $file ) = @_;
 	my $result = md5binfile( $file );
 	return $result unless $result->{pass};
 	return {pass => $result->{pass}->hexdigest(), m5o => $result->{pass}};
+
 }
