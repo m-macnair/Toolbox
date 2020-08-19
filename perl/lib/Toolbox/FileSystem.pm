@@ -164,6 +164,7 @@ sub buildtimepath {
 	my ( $root ) = @_;
 	checkdir( $root );
 	require Data::UUID;
+	require POSIX;
 	my $ug      = Data::UUID->new;
 	my $uuid    = lc( $ug->create_str() );
 	my $tmppath = POSIX::strftime( "/%Y-%m-%d/%H/%M:%S/", gmtime() );

@@ -11,6 +11,7 @@ our $VERSION = 'v1.0.1';
 our $CSV;
 use Text::CSV;
 
+# do something on csv rows that aren't commented out until something returns falsey
 sub suboncsv {
 
 	my ( $sub, $path ) = @_;

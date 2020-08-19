@@ -1,7 +1,7 @@
 apt-get update
 apt-get upgrade
 
-apt-get install --assume-yes screen >> apt_install.log 
+apt-get install --assume-yes screen make gcc >> apt_install.log 
 screen
 
 #get the perl going

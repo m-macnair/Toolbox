@@ -1,79 +1,59 @@
 use strict;
+
 package Some::Module;
-our $VERSION = '0.04';
-##~ DIGEST : 516777ae87b5a961e3a5cacec775c399
 
+our $VERSION = 'v1.0.0';
+##~ DIGEST : bc277024257589a858a5e1699be9d419
 
+use Moo;
 use 5.006;
 use warnings;
 
 =head1 NAME
 	~
 =head1 VERSION & HISTORY
-	<feature>.<patch>
-	0.01 - <date>
+	<breaking revision>.<feature>.<patch>
+	1.0.0 - <date>
 		<actions>
-	0.00 - <date unless same as above>
-		<actions>
+	1.0.0 - <date unless same as above>
+		The Mk1
 =cut
-
-
 
 =head1 SYNOPSIS
 	TODO
 =head2 TODO
 	Generall planned work
-=head1 EXPORT
+=head1 ACCESSORS
+=cut
+
+ACCESSORS: {
+
+	has something => (
+		is      => 'rw',
+		lazy    => 1,
+		default => sub { return 0 }
+	);
+}
+
 =head1 SUBROUTINES/METHODS
-=head2 SETUP
-=head3 new
-=cut
-
-sub new {
-	my ( $class, $conf ) = @_;
-	my $self = {};
-	bless $self, $class;
-	my $initresult = $self->_init( $conf );
-	die $initresult->{fail} unless $initresult->{pass};
-	return $self;
-}
-
-=head3 _init
-	Separate class instantiation and configuration for when that's a good idea (i.e. it's overwritten in child classes)
-=cut
-
-sub _init {
-	my ( $self, $conf ) = @_;
-	return {pass => 1};
-}
-
 =head2 PRIMARY SUBS
-	"The $thing the module is used for", usually implemented as wrappers around private functions
-=head3 new
-	create, config, return
+	Main purpose of the module
+=head3
 =cut
 
 sub do_something {
 	my ( $self, $p ) = @_;
-	$self->validate_some_value( $p, 'the_thing' );
-	$self->_do_something( $p );
+	$p ||= {};
 }
 
 =head2 SECONDARY SUBS
-	Actions used by one or more PRIMARY SUBS that aren't wrappers or accessors
+	Actions used by one or more PRIMARY SUBS that aren't wrappers
 =cut
 
 sub validate_some_value {
 	my ( $self, $p, $value ) = @_;
+	$p ||= {};
 	die unless ( $p->{$value} );
-}
-
-=head2 ACCESSORS
-=head3 getsomething
-=cut
-
-sub getsomething {
-
 }
 
 =head2 WRAPPERS
@@ -89,7 +69,7 @@ sub getsomething {
 =head1 ACKNOWLEDGEMENTS
 	TODO
 =head1 COPYRIGHT
-	Copyright 2019 mmacnair.
+ 	Copyright 2020 mmacnair.
 =head1 LICENSE
 	TODO
 =cut
