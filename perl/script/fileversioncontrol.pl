@@ -17,10 +17,10 @@ main();
 =cut
 
 sub main {
-	my $conf =
-	  Toolbox::CombinedCLI::array_config( [qw/ path/], [qw/increment set /] );
+    my $conf =
+      Toolbox::CombinedCLI::array_config( [qw/ path/], [qw/increment set /] );
 
-	my $cv = Toolbox::CodeVersion->new();
-	$cv->process_file( $conf->{path}, $conf );
+    my $cv = Toolbox::CodeVersion->new();
+    $cv->process_file( $conf->{path}, $conf );
 
 }

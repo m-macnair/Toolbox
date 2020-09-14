@@ -8,9 +8,9 @@ package Toolbox::DemandP;
 require Exporter;
 use Carp qw/confess/;
 use Data::Dumper;
-our $VERSION = 'v1.0.2';
+our $VERSION = 'v1.0.3';
 
-##~ DIGEST : 4da9a4afcb1fcf2c000c7b122c6c53c5
+##~ DIGEST : d5a2c8a8792fc18b35e1627abd94d4d0
 
 our @EXPORT = qw/
   demand_p
@@ -23,44 +23,50 @@ our @EXPORT = qw/
 =cut
 
 sub demand_p {
-	my ( $map, $list ) = @_;
+    my ( $map, $list ) = @_;
 
-	confess( "\$map is not a map, is instead : " . Dumper( $map ) )
-	  unless ref( $map ) eq 'HASH';
-	confess( "\$list is not a list, is instead : " . Dumper( $list ) )
-	  unless ref( $list ) eq 'ARRAY';
+    confess( "\$map is not a map, is instead : " . Dumper($map) )
+      unless ref($map) eq 'HASH';
+    confess( "\$list is not a list, is instead : " . Dumper($list) )
+      unless ref($list) eq 'ARRAY';
 
-	my $msg;
-	CHECK: {
-		for my $check ( @{$list} ) {
-			THISCHECK: {
-				my $ref = ref( $check );
+    my $msg;
+  CHECK: {
+        for my $check ( @{$list} ) {
+          THISCHECK: {
+                my $ref = ref($check);
 
-				#"If one of these values is present, move on"
-				if ( $ref eq 'ARRAY' ) {
-					for my $subcheck ( @{$check} ) {
-						if ( defined( $map->{$subcheck} ) ) {
-							next THISCHECK;
-						}
-					}
-					$msg = "None of [" . join( ',', @{$check} ) . "] provided in \$map";
-					last CHECK;
-				} elsif ( $ref ) {
-					$msg = "Non SCALAR, Non ARRAY reference [$ref] passed in \$list";
-					last CHECK;
-				} else {
-					unless ( $map->{$check} ) {
-						$msg = "Required key [$check] missing in \$map";
-						last CHECK;
-					}
-				}
-			}
-		}
-	}
-	if ( $msg ) {
-		confess( "$msg - \$map :\n\t" . Dumper( $map ) );
-	}
-	return;
+                #"If one of these values is present, move on"
+                if ( $ref eq 'ARRAY' ) {
+                    for my $subcheck ( @{$check} ) {
+                        if ( defined( $map->{$subcheck} ) ) {
+                            next THISCHECK;
+                        }
+                    }
+                    $msg =
+                        "None of ["
+                      . join( ',', @{$check} )
+                      . "] provided in \$map";
+                    last CHECK;
+                }
+                elsif ($ref) {
+                    $msg =
+                      "Non SCALAR, Non ARRAY reference [$ref] passed in \$list";
+                    last CHECK;
+                }
+                else {
+                    unless ( $map->{$check} ) {
+                        $msg = "Required key [$check] missing in \$map";
+                        last CHECK;
+                    }
+                }
+            }
+        }
+    }
+    if ($msg) {
+        confess( "$msg - \$map :\n\t" . Dumper($map) );
+    }
+    return;
 }
 
 1;

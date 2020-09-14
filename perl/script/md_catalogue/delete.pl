@@ -23,17 +23,17 @@ main();
 
 sub main {
 
-	my $clv = Toolbox::CombinedCLI::get_config( [qw/dbfile /], [qw/ vocal /] );
+    my $clv = Toolbox::CombinedCLI::get_config( [qw/dbfile /], [qw/ vocal /] );
 
-	# 	warn Dumper($clv);
-	my $mk77 = MK77->new(
-		{
-			dbfile => $clv->{dbfile}
-		}
-	);
+    # 	warn Dumper($clv);
+    my $mk77 = MK77->new(
+        {
+            dbfile => $clv->{dbfile}
+        }
+    );
 
-	$mk77->dodeletes( $clv );
+    $mk77->dodeletes($clv);
 
-	print "It is done. Move on!$/";
+    print "It is done. Move on!$/";
 
 }
