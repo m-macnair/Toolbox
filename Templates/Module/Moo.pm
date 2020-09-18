@@ -2,8 +2,8 @@ use strict;
 
 package Some::Module;
 
-our $VERSION = 'v1.0.0';
-##~ DIGEST : bc277024257589a858a5e1699be9d419
+our $VERSION = 'v1.0.1';
+##~ DIGEST : 90859d4ad0cf0a89720c6f5ce38facf0
 
 use Moo;
 use 5.006;

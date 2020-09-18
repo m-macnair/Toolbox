@@ -3,9 +3,9 @@ use warnings;
 
 # ABSTRACT : things that are shared in the pathscripts, but don't make sense as modules
 package Toolbox::PathScripts;
-our $VERSION = 'v1.33.9';
+our $VERSION = 'v1.33.10';
 
-##~ DIGEST : 9048e60afd4913be7b4110d7036fd98e
+##~ DIGEST : d3d002917ef5589139e417f86bc2dd25
 use Toolbox::FileSystem @Toolbox::FileSystem::EXPORT_OK;
 use File::Basename;
 use Cwd;
@@ -20,37 +20,35 @@ our @EXPORT = qw(
 
 sub usetemplatefile {
 
-    my ( $cfile, $templatepath, $target ) = @_;
-    $target ||= './';
+	my ( $cfile, $templatepath, $target ) = @_;
+	$target ||= './';
 
-    my $tdir = gettdir($cfile);
-    applytemplatefile( "$tdir/$templatepath", $target );
+	my $tdir = gettdir( $cfile );
+	applytemplatefile( "$tdir/$templatepath", $target );
 
 }
 
 sub gettdir {
-    my ($rootfile) = @_;
-    my $thisfile   = Cwd::abs_path($rootfile);
-    my $thisdir    = File::Basename::dirname($thisfile);
-    my $tdir       = abspath("$thisdir/../../Templates/");
-    die "template directory [$tdir] not found " unless -d $tdir;
-    return $tdir;
+	my ( $rootfile ) = @_;
+	my $thisfile     = Cwd::abs_path( $rootfile );
+	my $thisdir      = File::Basename::dirname( $thisfile );
+	my $tdir         = abspath( "$thisdir/../../Templates/" );
+	die "template directory [$tdir] not found " unless -d $tdir;
+	return $tdir;
 }
 
 sub applytemplatefile {
-    my ( $source, $target ) = @_;
-    if ( -f $target ) {
-        my $backup =
-          safemvf( $target, File::Basename::dirname($target), { mute => 1 } );
-        print `cp -ruv $source $target`;
+	my ( $source, $target ) = @_;
+	if ( -f $target ) {
+		my $backup =
+		  safemvf( $target, File::Basename::dirname( $target ), {mute => 1} );
+		print `cp -ruv $source $target`;
 
-    }
-    elsif ( -d $target ) {
-        print `cp -ruv $source $target`;
-    }
-    else {
-        print `cp -ruv $source $target`;
-    }
+	} elsif ( -d $target ) {
+		print `cp -ruv $source $target`;
+	} else {
+		print `cp -ruv $source $target`;
+	}
 }
 
 1;

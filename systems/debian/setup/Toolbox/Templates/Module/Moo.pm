@@ -1,8 +1,8 @@
 use strict;
-package Some::Module;
-our $VERSION = '0.04';
-##~ DIGEST : 516777ae87b5a961e3a5cacec775c399
 
+package Some::Module;
+our $VERSION = '0.05';
+##~ DIGEST : 4d066c7666105ebf81ec6fe43265e657
 
 use 5.006;
 use warnings;
@@ -16,8 +16,6 @@ use warnings;
 	0.00 - <date unless same as above>
 		<actions>
 =cut
-
-
 
 =head1 SYNOPSIS
 	TODO

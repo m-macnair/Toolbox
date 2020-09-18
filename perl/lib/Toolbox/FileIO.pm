@@ -1,12 +1,12 @@
-use strict;    # applies to all packages defined in the file
+use strict; # applies to all packages defined in the file
 use Carp qw/cluck confess/;
 
 package Toolbox::FileIO;
 
 # ABSTRACT: Read and write files in various ways
-our $VERSION = 'v1.0.4';
+our $VERSION = 'v1.0.5';
 
-##~ DIGEST : 24b615da7b713442d0cc034432c73cc9
+##~ DIGEST : d44e6adf738de2c985e7b88358b70c5c
 
 our $FILEHANDLES = {};
 
@@ -39,52 +39,45 @@ our @EXPORT_OK = qw(
 =cut
 
 sub slurptoref {
-    my ($path) = @_;
-    require Toolbox::FileSystem;
-    Toolbox::FileSystem::checkfile($path);
-    require File::Slurp;
-    my $return = File::Slurp::read_file($path);
-    return \$return;    # return!
+	my ( $path ) = @_;
+	require Toolbox::FileSystem;
+	Toolbox::FileSystem::checkfile( $path );
+	require File::Slurp;
+	my $return = File::Slurp::read_file( $path );
+	return \$return; # return!
 }
 
 sub slurp {
-    my ($path) = @_;
-    return ${ slurptoref($path) };
+	my ( $path ) = @_;
+	return ${slurptoref( $path )};
 }
 
 sub ofh {
-    my ( $path, $c ) = @_;
-    $c ||= {};
-    unless ( exists( $FILEHANDLES->{$path} ) ) {
-        if ( $c->{fh} ) {
-            $FILEHANDLES->{$path} = $c->{fh};
-        }
-        else {
-            unless (
-                open(
-                    $FILEHANDLES->{$path},
-                    $c->{openparams} || ">:encoding(UTF-8)", $path
-                )
-              )
-            {
-                confess("Failed to open write file [$path] : $!");
-            }
-        }
-    }
-    return $FILEHANDLES->{$path};
+	my ( $path, $c ) = @_;
+	$c ||= {};
+	unless ( exists( $FILEHANDLES->{$path} ) ) {
+		if ( $c->{fh} ) {
+			$FILEHANDLES->{$path} = $c->{fh};
+		} else {
+			unless ( open( $FILEHANDLES->{$path}, $c->{openparams} || ">:encoding(UTF-8)", $path ) ) {
+				confess( "Failed to open write file [$path] : $!" );
+			}
+		}
+	}
+	return $FILEHANDLES->{$path};
 }
 
 sub closefhs {
-    my ($paths) = @_;
+	my ( $paths ) = @_;
 
-    #close all unless specific
-    $paths ||= [ keys( %{$FILEHANDLES} ) ];
+	#close all unless specific
+	$paths ||= [ keys( %{$FILEHANDLES} ) ];
 
-    for ( @{$paths} ) {
-        close( $FILEHANDLES->{$_} )
-          or confess("Failed to close file handle for [$_] : $!");
-        undef( $FILEHANDLES->{$_} );
-    }
+	for ( @{$paths} ) {
+		close( $FILEHANDLES->{$_} )
+		  or confess( "Failed to close file handle for [$_] : $!" );
+		undef( $FILEHANDLES->{$_} );
+	}
 
 }
 

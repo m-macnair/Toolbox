@@ -8,25 +8,25 @@ use Toolbox::FileSystem;
 main(@ARGV);
 
 sub main {
-    my ( $stackfile, $module ) = @_;
-    if ($module) {
-        $module .= '::';
-    }
-    else {
-        $module = '';
-    }
-    Toolbox::FileSystem::checkfile($stackfile);
-    my @stack;
-    Toolbox::FileIO::CSV::suboncsv(
-        sub {
-            my ($row) = @_;
-            push( @stack, $row->[0] ) if $row->[0];
-            return 1;
-        },
-        $stackfile
-    );
-    for my $method (@stack) {
-        print "sub $method { shift; return $module$method(\@_); }$/";
-    }
-}
 
+	my ( $stackfile, $module ) = @_;
+	if ($module) {
+		$module .= '::';
+	} else {
+		$module = '';
+	}
+	Toolbox::FileSystem::checkfile($stackfile);
+	my @stack;
+	Toolbox::FileIO::CSV::suboncsv(
+		sub {
+			my ($row) = @_;
+			push ( @stack, $row->[0] ) if $row->[0];
+			return 1;
+		},
+		$stackfile
+	);
+	for my $method (@stack) {
+		print "sub $method { shift; return $module$method(\@_); }$/";
+	}
+
+}
