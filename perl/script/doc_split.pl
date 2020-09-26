@@ -6,7 +6,8 @@ main();
 
 sub main {
 
-	my $clv = Toolbox::CombinedCLI::get_config( [
+	my $clv = Toolbox::CombinedCLI::get_config(
+		[
 			qw/
 			  path
 			  /
@@ -20,26 +21,26 @@ sub main {
 			end   => '^}$'
 		}
 	};
-	my @mapkeys = keys ( %{$search} );
+	my @mapkeys = keys( %{$search} );
 	my $p       = {};
 
 	# TODO tiering
-	open ( my $ifh, '<:utf8', $clv->{path} ) or die $!;
+	open( my $ifh, '<:utf8', $clv->{path} ) or die $!;
 	while ( my $line = <$ifh> ) {
 		if ( $p->{current} ) {
 
 			#keep pushing and look for the closing token
 		} else {
 			my $match;
-			for my $key (@mapkeys) {
-				my ($match) = ( $line =~ m/($search->{$key}->{start})/ );
+			for my $key ( @mapkeys ) {
+				my ( $match ) = ( $line =~ m/($search->{$key}->{start})/ );
 				last if $match;
 			}
-			if ($match) {
+			if ( $match ) {
 				$p->{current} = $match;
-				push ( $p->{elements}->{$match}, $line );
+				push( $p->{elements}->{$match}, $line );
 			} else {
-				push ( @{ $p->{doc} }, $line );
+				push( @{$p->{doc}}, $line );
 			}
 		}
 	}

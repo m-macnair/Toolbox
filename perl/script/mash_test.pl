@@ -4,7 +4,7 @@ my @hosts = qw/
   192.168.0.3
   192.168.0.16
   /;
-for my $host (@hosts) {
+for my $host ( @hosts ) {
 	my $opts = {
 		expand_vars => 1,
 		user        => 'm',

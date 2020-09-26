@@ -12,6 +12,7 @@ use Moo;
 =head3 checkknown
 	confirm things we know are there are still there
 =cut
+
 1;
 
 package main;
@@ -24,8 +25,8 @@ sub main {
 	my $clv = Toolbox::CombinedCLI::get_config( [qw/dbfile /], [qw/ vocal /] );
 
 	# 	warn Dumper($clv);
-	my $mk77 = MK77->new( { dbfile => $clv->{dbfile} } );
-	$mk77->dodeletes($clv);
+	my $mk77 = MK77->new( {dbfile => $clv->{dbfile}} );
+	$mk77->dodeletes( $clv );
 	print "It is done. Move on!$/";
 
 }

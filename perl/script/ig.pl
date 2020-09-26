@@ -1,7 +1,7 @@
 use strict;
 use warnings;
-our $VERSION = 'v1.0.15';
-##~ DIGEST : ffedf16a3cfb22a04e369a21ee1dd62c
+our $VERSION = 'v1.0.16';
+##~ DIGEST : f78bc019f845214f4fbc8471e2df79e8
 #IG trading platform API trial
 package IGAPI;
 use Moo;
@@ -21,7 +21,7 @@ ACCESSORS: {
 		has rooturl       => ( is => 'rw', );
 		has mute          => ( is => 'rw' );
 		has accountstatus => ( is => 'rw' );
-		has currency      => ( is => 'ro', default => sub {'GBP'} ); # should never change
+		has currency      => ( is => 'ro', default => sub { 'GBP' } ); # should never change
 	}
 	AUTH: {
 		has user             => ( is => 'rw', );
@@ -40,9 +40,9 @@ ACCESSORS: {
 
 			#straight copy Toolbox::FileSystem::buildtmpdirpath... which lead to it being refactord :dappershark:
 			default => sub {
-				my ($self) = @_;
+				my ( $self ) = @_;
 				my $path = $self->buildtimepath( $self->auditroot() );
-				$self->mkpath($path);
+				$self->mkpath( $path );
 				return $path;
 			}
 		);
@@ -50,7 +50,7 @@ ACCESSORS: {
 			is      => 'rw',
 			lazy    => 1,
 			default => sub {
-				my ($self) = @_;
+				my ( $self ) = @_;
 				return $self->auditdir() . '/activity.log';
 			}
 		);
@@ -58,14 +58,14 @@ ACCESSORS: {
 			is      => 'rw',
 			lazy    => 1,
 			default => sub {
-				my ($self) = @_;
-				open ( my $fh, ">:encoding(UTF-8)", $self->logfilepath() )
-				  or confess("Failed to open logfile! : $!");
+				my ( $self ) = @_;
+				open( my $fh, ">:encoding(UTF-8)", $self->logfilepath() )
+				  or confess( "Failed to open logfile! : $!" );
 
 				#Cargo Cultin'
-				my $h = select ($fh);
+				my $h = select( $fh );
 				$| = 1;
-				select ($h);
+				select( $h );
 			}
 		);
 	}
@@ -91,19 +91,19 @@ sub auditedrequest {
 		'Content-Type' => 'application/json; charset=UTF-8',
 		'Accept'       => 'application/json; charset=UTF-8',
 	);
-	for my $header ( keys ( %{$headers} ) ) {
+	for my $header ( keys( %{$headers} ) ) {
 		$req->header( $header => $headers->{$header} );
 	}
 	if ( %{$q} ) {
-		$req->content( $self->json->encode($q) );
+		$req->content( $self->json->encode( $q ) );
 	}
 
 	#log what we're about to do
 	LOGREQ: {
 		my ( $s, $usec ) = gettimeofday();
 		my $requestfh = $self->ofh( $self->auditdir() . "/$s\_$usec\_request.pm" );
-		print $requestfh Dumper($req);
-		close ($requestfh);
+		print $requestfh Dumper( $req );
+		close( $requestfh );
 	}
 
 	#hcf when/where necessary
@@ -111,18 +111,18 @@ sub auditedrequest {
 	LOGRESPONSE: {
 		my ( $s, $usec ) = gettimeofday();
 		my $responsefh = $self->ofh( $self->auditdir() . "/$s\_$usec\_response.pm" );
-		$result = $ua->request($req);
-		print $responsefh Dumper($result);
-		close ($responsefh);
+		$result = $ua->request( $req );
+		print $responsefh Dumper( $result );
+		close( $responsefh );
 	}
 	if ( $result->{_rc} != 200 ) {
 		if ( $result->{_content} ) {
 			$self->log( $result->{_content} );
 		}
-		$self->log("Request failed - check audit for cause");
+		$self->log( "Request failed - check audit for cause" );
 		exit;
 	}
-	return ($result);
+	return ( $result );
 
 }
 
@@ -132,25 +132,27 @@ sub auditedrequest {
 
 sub getencryptionkey {
 
-	my ($self) = @_;
-	my $res = $self->auditedrequest( {
+	my ( $self ) = @_;
+	my $res = $self->auditedrequest(
+		{
 			url  => $self->rooturl() . '/session/encryptionKey',
 			type => 'GET'
 		}
 	);
 	my $decodedres = $self->json->decode( $res->{_content} );
-	die Dumper($decodedres);
+	die Dumper( $decodedres );
 
 }
 
 sub login {
 
-	my ($self) = @_;
-	$self->log("Starting new session");
+	my ( $self ) = @_;
+	$self->log( "Starting new session" );
 
 	# 	my $key = $self->getencryptionkey();
 	# 	$self->pass($self->encrypt($self->pass()));
-	my $res = $self->auditedrequest( {
+	my $res = $self->auditedrequest(
+		{
 			url  => $self->rooturl() . '/session',
 			type => 'POST'
 		},
@@ -162,12 +164,12 @@ sub login {
 	);
 	$self->accountstatus( $self->json->decode( $res->{_content} ) );
 	$self->securitytoken( $res->{_headers}->{'x-security-token'} );
-	$self->log("Got security token value [$res->{_headers}->{'x-security-token'}]");
+	$self->log( "Got security token value [$res->{_headers}->{'x-security-token'}]" );
 	$self->cst( $res->{_headers}->{cst} );
-	$self->log("Got cst value [$res->{_headers}->{cst}]");
+	$self->log( "Got cst value [$res->{_headers}->{cst}]" );
 	my $now = time;
-	$self->cstage($now);
-	$self->securitytokenage($now);
+	$self->cstage( $now );
+	$self->securitytokenage( $now );
 
 }
 
@@ -178,7 +180,8 @@ sub login {
 sub getepics {
 
 	my ( $self, $search ) = @_;
-	my $res = $self->auditedrequest( {
+	my $res = $self->auditedrequest(
+		{
 			url     => $self->rooturl() . "/markets?searchTerm=$search",
 			type    => 'GET',
 			version => 1,
@@ -186,14 +189,15 @@ sub getepics {
 		undef,
 		$self->authheaders()
 	);
-	print Dumper($res);
+	print Dumper( $res );
 
 }
 
 sub getepicdetail {
 
 	my ( $self, $epiccode ) = @_;
-	my $res = $self->auditedrequest( {
+	my $res = $self->auditedrequest(
+		{
 			url     => $self->rooturl() . "/markets/$epiccode",
 			type    => 'GET',
 			version => 1,
@@ -201,14 +205,14 @@ sub getepicdetail {
 		undef,
 		$self->authheaders()
 	);
-	print Dumper($res);
+	print Dumper( $res );
 
 }
 
 sub snakeuuid {
 
-	my ($self) = @_;
-	my $uuid = substr ( $self->getuuid(), undef, 29 );
+	my ( $self ) = @_;
+	my $uuid = substr( $self->getuuid(), undef, 29 );
 	$uuid =~ s|-|_|g;
 	return $uuid;
 
@@ -236,9 +240,9 @@ sub order {
 			/
 		  )
 		{
-			confess("$required not provided") unless $p->{$required};
+			confess( "$required not provided" ) unless $p->{$required};
 		}
-		$orderbody->{direction} = uc ( $p->{direction} );
+		$orderbody->{direction} = uc( $p->{direction} );
 
 		#always uppercase - IG's proprietary identifiers
 		$orderbody->{epic} = $p->{epic};
@@ -280,13 +284,14 @@ sub order {
 		$orderbody->{$_} = $p->{$_};
 	}
 	DUMPSTRUCTURE: {
-		$self->log("Creating order structure dump");
+		$self->log( "Creating order structure dump" );
 		my ( $s, $usec ) = gettimeofday();
 		my $ofh = $self->ofh( $self->auditdir() . "/$s\_$usec\_order_structure.pm" );
-		print $ofh Dumper($orderbody);
-		close ($ofh);
+		print $ofh Dumper( $orderbody );
+		close( $ofh );
 	}
-	$self->auditedrequest( {
+	$self->auditedrequest(
+		{
 			url  => $self->rooturl() . '/workingorders/otc',
 			type => 'POST',
 		},
@@ -298,8 +303,9 @@ sub order {
 
 sub listorders {
 
-	my ($self) = @_;
-	$self->auditedrequest( {
+	my ( $self ) = @_;
+	$self->auditedrequest(
+		{
 			url  => $self->rooturl() . '/workingorders',
 			type => 'GET',
 		},
@@ -315,13 +321,13 @@ sub listorders {
 
 sub authheaders {
 
-	my ($self) = @_;
+	my ( $self ) = @_;
 	my $maxold = ( time - 57 );
 	if ( $self->cstage() <= $maxold ) {
-		$self->logexit('CST is too old');
+		$self->logexit( 'CST is too old' );
 	}
 	if ( $self->securitytokenage() <= $maxold ) {
-		$self->logexit('Security token is too old');
+		$self->logexit( 'Security token is too old' );
 	}
 	return {
 		'x-security-token' => $self->securitytoken(),
@@ -358,7 +364,7 @@ sub log {
 sub logquit {
 
 	my ( $self, $msg ) = @_;
-	$self->log($msg);
+	$self->log( $msg );
 	exit;
 
 }
@@ -370,7 +376,8 @@ main();
 
 sub main {
 
-	my $conf = Toolbox::CombinedCLI::get_config( [
+	my $conf = Toolbox::CombinedCLI::get_config(
+		[
 			qw/
 			  user
 			  pass
@@ -380,12 +387,13 @@ sub main {
 			  /
 		]
 	);
-	my $self = IGAPI->new($conf);
+	my $self = IGAPI->new( $conf );
 	$self->login();
 
 	# 	$self->getepic( 'US 500' );
 	# 	$self->getepicdetail('IX.D.SPTRD.DAILY.IP');
-	$self->order( {
+	$self->order(
+		{
 			direction => 'SELL',
 			epic      => 'AA.D.FLT.DAILY.IP',
 			size      => '-0.01',
@@ -399,7 +407,7 @@ sub main {
 	);
 
 	# 	$self->listorders();
-	$self->log('finished');
+	$self->log( 'finished' );
 
 }
 

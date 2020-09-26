@@ -9,14 +9,14 @@ main( @ARGV );
 
 sub main {
 
-	my $thisfile = Cwd::abs_path( __FILE__ );
-	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $thisfile );
+	my $this_file = Cwd::abs_path( __FILE__ );
+	my ( $dev, $this_dir, $file ) = File::Spec->splitpath( $this_file );
 
 	#parent directory of this file's parent directory
-	my $tbdir = Cwd::abs_path( dirname( $thisdir ) );
+	my $tbdir = Cwd::abs_path( dirname( $this_dir ) );
 
 	#parent directory of this file's parent directory's parent directory
-	my $gitdir = Cwd::abs_path( dirname( $tbdir ) );
+	my $git_dir = Cwd::abs_path( dirname( $tbdir ) );
 
 	my @perllibs;
 
@@ -25,13 +25,9 @@ sub main {
 		`git config --global credential.helper 'cache --timeout=36000'`;
 		`chmod 0700 /home/$ENV{USER}/.git-credential-cache`;
 
-		#Moo::Role repo (obsolete)
-		`git clone https://github.com/m-macnair/Moo-Role.git $gitdir/Moo-Role`;
-		push( @perllibs, "$gitdir/Moo-Role/lib/" );
-
-		#Moo::GenericRole repo
-		`git clone https://github.com/m-macnair/Moo-GenericRole.git $gitdir/Moo-GenericRole`;
-		push( @perllibs, "$gitdir/Moo-GenericRole/lib/" );
+		#clone my stuff and get ready to push the lib directory into the user's perl library stack
+		push( @perllibs, get_repo_lib( $git_dir, 'https://github.com/m-macnair/Toolbox-lib.git',     'Toolbox-lib' ) );
+		push( @perllibs, get_repo_lib( $git_dir, 'https://github.com/m-macnair/Moo-GenericRole.git', 'Moo-GenericRole' ) );
 
 	}
 
@@ -42,31 +38,28 @@ sub main {
 				`chmod +x  "$ENV{HOME}/.bash_profile"`;
 				`echo "#!/bin/bash" > "$ENV{HOME}/.bash_profile"`;
 			}
-			unless ( inprof( 'source ~/.bashrc' ) ) {
-				`echo "source ~/.bashrc" > "$ENV{HOME}/.bash_profile"`;
-			}
+
 			`touch "$ENV{HOME}/.bashrc"` unless -e "$ENV{HOME}/.bashrc";
-			my $in = inrc( 'Toolbox/WorkEnv/Bash/bash_source.sh' );
-			unless ( $in ) {
-				my $cmd = qq|echo "source $thisdir/Bash/bash_source.sh" >> "$ENV{HOME}/.bashrc"|;
-				system( $cmd);
-			}
+
+			add_unless( '.bashrc',                       "$ENV{HOME}/.bash_profile", 'source ~/' );
+			add_unless( "$this_dir/Bash/bash_source.sh", "$ENV{HOME}/.bashrc",       'source ' );
+
 		}
+
+		#Construct a user agnostic bash source file that the user can append to their own; instead of zapping a perfectly good one
 		BASHSOURCE: {
 
 			#reset
-			`echo 'export TOOLBOXDIR="$tbdir"' > $thisdir/Bash/bash_source.sh`;
+			`echo 'export TOOLBOXDIR="$tbdir"' > $this_dir/Bash/bash_source.sh`;
 
 			#append
-			`echo 'export PATH="\$PATH:$thisdir/PathScripts"' >> $thisdir/Bash/bash_source.sh`;
+			`echo 'export PATH="\$PATH:$this_dir/PathScripts"' >> $this_dir/Bash/bash_source.sh`;
 
-			`cat $thisdir/Bash/bash_source_baseline.txt >> $thisdir/Bash/bash_source.sh`;
-
-			push( @perllibs, "$tbdir/perl/lib/" );
+			`cat $this_dir/Bash/bash_source_baseline.txt >> $this_dir/Bash/bash_source.sh`;
 
 			PERLLIBS: {
 				my $perllibstr = join( ':', @perllibs );
-				`echo 'export PERL5LIB="\$PERL5LIB:$perllibstr"' >> $thisdir/Bash/bash_source.sh`;
+				`echo 'export PERL5LIB="\$PERL5LIB:$perllibstr"' >> $this_dir/Bash/bash_source.sh`;
 			}
 		}
 
@@ -76,6 +69,7 @@ sub main {
 	PERL: {
 		#connect perltidy if there isn't one already
 		my $pt = "$ENV{HOME}/.perltidyrc";
+
 		unless ( -e $pt ) {
 			my $tpt = "$tbdir/perl/perltidyrc";
 			if ( -e $tpt ) {
@@ -89,6 +83,7 @@ sub main {
 	}
 
 	KDE: {
+
 		if ( -e "$ENV{HOME}/.kde" ) {
 			KONSOLE: {
 				File::Find::find(
@@ -100,7 +95,7 @@ sub main {
 						no_chdir => 1,
 						follow   => 0,
 					},
-					"$thisdir/KDE/konsole"
+					"$this_dir/KDE/konsole"
 				);
 			}
 
@@ -109,26 +104,40 @@ sub main {
 	}
 }
 
-sub inrc {
-	my ( $value ) = @_;
-	return `grep "$value" "$ENV{HOME}/.bashrc"`;
+#not quite right but consistent
+
+sub add_unless {
+	my ( $string, $path, $string_prefix ) = @_;
+	$string =~ s| |\ |g;
+	unless ( `cat $path | grep $string ` ) {
+		print `echo "$string_prefix$string" >> "$path"`;
+	}
 }
 
-sub inprof {
-	my ( $value ) = @_;
-	return `grep "$value" "$ENV{HOME}/.bash_profile"`;
+sub get_repo_lib {
+	my ( $git_dir, $url, $name ) = @_;
+	unless ( -e "$git_dir/$name" ) {
+		`git clone $url $git_dir/$name`;
+	}
+	my $lib_path = "$git_dir/$name/lib/";
+	unless ( -e $lib_path ) {
+		die "Library path for $url [$lib_path] not found";
+	}
+	return $lib_path;
 }
 
 sub link_in_dir_unless_exists {
 	my ( $source_file, $target_dir ) = @_;
-	my ( $dev, $thisdir, $file ) = File::Spec->splitpath( $source_file );
+	my ( $dev, $this_dir, $file ) = File::Spec->splitpath( $source_file );
 	link_to_unless_exists( $source_file, "$target_dir/$file" );
 }
 
 sub link_to_unless_exists {
 	my ( $source, $target ) = @_;
 
-	unless ( -e $target ) {
+	# TIL -e doesn't catch softlinks
+	unless ( -l $target || -e $target ) {
 		`ln -s $source $target`;
 	}
 }
+

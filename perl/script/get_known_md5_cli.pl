@@ -18,15 +18,15 @@ sub read_map_file {
 
 	my ( $self, $path ) = @_;
 	$path ||= $self->cfg->{list_file};
-	$self->checkfile($path);
+	$self->checkfile( $path );
 	my $map = {};
 	Toolbox::FileIO::CSV::suboncsv(
 		sub {
 			my $row = shift;
 			return 1 unless $row->[0];
-			$map->{path}->{ $row->[0] }->{hash}  = $row->[1];
-			$map->{path}->{ $row->[0] }->{known} = $row->[2];
-			push ( @{ $map->{hash}->{ $row->[1] } }, $row->[0] );
+			$map->{path}->{$row->[0]}->{hash}  = $row->[1];
+			$map->{path}->{$row->[0]}->{known} = $row->[2];
+			push( @{$map->{hash}->{$row->[1]}}, $row->[0] );
 			return 1;
 		},
 		$path
@@ -39,15 +39,15 @@ sub print_map_file {
 
 	my ( $self, $map, $path ) = @_;
 	my $csv = Toolbox::FileIO::CSV::getcsv;
-	my $ofh = $self->ofh($path);
+	my $ofh = $self->ofh( $path );
 	use Data::Dumper;
 
 	#headers
-	$csv->print( $ofh, ['#path', 'hash', 'known'] );
+	$csv->print( $ofh, [ '#path', 'hash', 'known' ] );
 
 	#content
-	for my $path ( sort ( keys ( %{$map} ) ) ) {
-		$csv->print( $ofh, [$path, $map->{$path}->{hash}, $map->{$path}->{known} || 0,] );
+	for my $path ( sort ( keys( %{$map} ) ) ) {
+		$csv->print( $ofh, [ $path, $map->{$path}->{hash}, $map->{$path}->{known} || 0, ] );
 	}
 	$self->closefhs( [$path] );
 
@@ -59,8 +59,8 @@ sub md5_dir {
 	my $map = {};
 	$self->sub_on_files(
 		sub {
-			my ($path) = @_;
-			my $ctx = $self->md5_path($path);
+			my ( $path ) = @_;
+			my $ctx = $self->md5_path( $path );
 
 			#hex for cross compatibility
 			$map->{$path}->{hash} = $ctx->hexdigest();
@@ -78,8 +78,8 @@ sub md5_path {
 	my ( $self, $path ) = @_;
 	use Digest::MD5;
 	my $ctx = Digest::MD5->new;
-	open ( my $fh, '<', $path ) or Carp::confess "Can't open [$path]: $!";
-	$ctx->addfile($fh);
+	open( my $fh, '<', $path ) or Carp::confess "Can't open [$path]: $!";
+	$ctx->addfile( $fh );
 	return $ctx;
 
 }
@@ -95,9 +95,9 @@ sub check_hash_stack {
 			hashes => $stack
 		}
 	);
-	Carp::confess( "JSON submission failed : " . Dumper($res) ) unless $res->{pass};
+	Carp::confess( "JSON submission failed : " . Dumper( $res ) ) unless $res->{pass};
 	use Data::Dumper;
-	print Dumper($res);
+	print Dumper( $res );
 
 }
 1;
@@ -122,20 +122,15 @@ sub main {
 		$o->check_cfg( [qw/list_file check_url /] );
 		$o->checkfile( $o->cfg->{list_file} );
 		my $map = $o->read_map_file( $o->cfg->{list_file} );
-		$o->check_hash_stack( [keys ( %{ $map->{hash} } )] );
+		$o->check_hash_stack( [ keys( %{$map->{hash}} ) ] );
 		exit;
 	} else {
 		die "unknown action";
 	}
 	my $map  = $o->process_list_file();
-	my $keys = keys (%$map);
+	my $keys = keys( %$map );
 	use Data::Dumper;
-	print Dumper(
-		$o->post_retrieve_json(
-			'http://localhost/apitrial.pl',
-			{ 'keys' => $keys }
-		)
-	);
+	print Dumper( $o->post_retrieve_json( 'http://localhost/apitrial.pl', {'keys' => $keys} ) );
 
 }
 1;
