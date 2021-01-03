@@ -14,7 +14,9 @@ gpg --edit-key <key name>
 #> quit
 
 pass init <key name>
+
 pass git init
 pass git remote add origin </home/m/git-repo/PassStore.git>
 pass git pull origin master --allow-unrelated-histories
 pass git reset --hard
+pass git branch --set-upstream-to=origin/master master
