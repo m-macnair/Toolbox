@@ -1,0 +1,20 @@
+#derived from 
+#https://access.redhat.com/solutions/2115511
+#https://gist.github.com/flbuddymooreiv/a4f24da7e0c3552942ff
+
+#On origin comp:
+gpg -a --export >pub_keys.asc
+gpg -a --export-secret-keys >pri_keys.asc
+# copy above to target machine 
+
+#on target machine
+gpg --edit-key <key name>
+#> trut
+#> 5
+#> quit
+
+pass init <key name>
+pass git init
+pass git remote add origin </home/m/git-repo/PassStore.git>
+pass git pull origin master --allow-unrelated-histories
+pass git reset --hard
