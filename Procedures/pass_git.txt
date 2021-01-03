@@ -9,7 +9,7 @@ gpg -a --export-secret-keys >pri_keys.asc
 
 #on target machine
 gpg --edit-key <key name>
-#> trut
+#> trust
 #> 5
 #> quit
 
