@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-our $VERSION = 'v1.0.10';
-##~ DIGEST : 8b08b838f8070755c2b033ed1899d207
+our $VERSION = 'v1.0.11';
+##~ DIGEST : b22df0c61c52765d494e680e4fba9c7e
 # ABSTRACT : A script for gradually importing resources from a master mysql source to a slave source _without_ bringing the master out of production
 use strict;
 use warnings;

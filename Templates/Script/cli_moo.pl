@@ -1,7 +1,8 @@
 #!/usr/bin/perl
-# ABSTRACT: 
-our $VERSION = 'v0.0.0';
+# ABSTRACT:
+our $VERSION = 'v0.0.1';
 
+##~ DIGEST : 0a842c7a43fe095742b16052fe2f80ec
 
 use strict;
 use warnings;
