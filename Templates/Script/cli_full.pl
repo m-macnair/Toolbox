@@ -1,4 +1,7 @@
 #!/usr/bin/perl
+# ABSTRACT: 
+our $VERSION = 'v0.0.0';
+
 use strict;
 use warnings;
 use Toolbox::CombinedCLI;

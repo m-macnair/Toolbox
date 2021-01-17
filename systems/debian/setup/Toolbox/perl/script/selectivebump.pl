@@ -35,6 +35,8 @@ sub main {
 	while ( <$fh> ) {
 		push( @writebuffer, $_ );
 		if ( !$versionline && ( index( $_, 'our $VERSION' ) == 0 ) ) {
+
+##~ DIGEST : cc00c3d494aee1cd29691719afb8e98c
 			$versionline = scalar( @writebuffer ) - 1;
 			next;
 		}

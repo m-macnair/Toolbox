@@ -1,8 +1,7 @@
 #!/usr/bin/perl
-#ABSTRACT:
-our $VERSION = 'v0.0.1';
+# ABSTRACT: 
+our $VERSION = 'v0.0.0';
 
-##~ DIGEST : 6002a493e13feff1a483e16d2d7b3629
 
 use strict;
 use warnings;
@@ -11,6 +10,7 @@ package Obj;
 use Moo;
 use parent 'Moo::GenericRoleClass::CLI'; #provides  CLI, FileSystem, Common
 with qw/
+  Moo::GenericRole::FileSystem
   Moo::GenericRole::FileIO
   Moo::GenericRole::FileIO::CSV
 

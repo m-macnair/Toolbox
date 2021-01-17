@@ -20,3 +20,6 @@ Misc
 	Cross System Deduplicator in Wx
 	Pi For Dev
 	
+	
+replicating_migrate.pl
+	show mysqldump command on error
