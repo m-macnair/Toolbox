@@ -39,6 +39,10 @@ has _something => (
 
 sub process {
 	my ( $self ) = @_;
+	$self->set_dbh_from_def($self->json_load_file($self->cfg->{db_def_file}));
+	$self->sub_on_csv(sub{
+		my ($row) = @_;
+	},$self->cfg->{in_file});
 }
 1;
 
@@ -60,7 +64,12 @@ sub main {
 		],
 		{
 			required => {},
-			optional => {}
+			optional => {
+				db_def_file => "JSON file containing database connection details",
+				in_file => "Path to input file",
+				out_file => "Explicit output file path",
+			
+			}
 		}
 	);
 	$self->process();

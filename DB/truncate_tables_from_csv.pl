@@ -45,7 +45,7 @@ sub process {
 sub _set_dbh {
 
 	my $self = shift;
-	return $self->dbh_from_def( $self->json_load_file( $self->cfg->{target_db_conf} ) );
+	return $self->dbh_from_def( $self->json_load_file( $self->cfg->{db_def_file} ) );
 
 }
 
@@ -64,11 +64,11 @@ sub main {
 
 	my $obj = Obj->new();
 	$obj->get_config(
-		[qw/  target_db_conf table_csv /],
+		[qw/  db_def_file table_csv /],
 		[],
 		{
 			required => {
-				target_db_conf => 'Source database connection details in json format',
+				db_def_file => 'Source database connection details in json format',
 				table_csv      => 'CSV file with list of tables to process',
 			}
 		}
