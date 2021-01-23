@@ -23,3 +23,6 @@ Misc
 	
 replicating_migrate.pl
 	show mysqldump command on error
+	
+	
+Transfer selective bump into generic role from toolbox lib

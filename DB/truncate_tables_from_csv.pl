@@ -1,7 +1,7 @@
 #!/usr/bin/perl
-#ABSTRACT:
-our $VERSION = 'v0.0.3';
-##~ DIGEST : 3abb5d610e9adfd1784a93e281262658
+#ABSTRACT: given a connection definition and a csv file of table names, truncate each table (that exists) in the target database
+our $VERSION = 'v0.0.4';
+##~ DIGEST : 37c93894104d5881f3521d94ced9c3db
 use strict;
 use warnings;
 
@@ -69,7 +69,7 @@ sub main {
 		{
 			required => {
 				db_def_file => 'Source database connection details in json format',
-				table_csv      => 'CSV file with list of tables to process',
+				table_csv   => 'CSV file with list of tables to process',
 			}
 		}
 	);

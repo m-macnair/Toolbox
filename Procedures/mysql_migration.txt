@@ -1,0 +1,3 @@
+1. mysql dump with a suitably _high_ statement length
+2. verify target mysql installation has buffers set correctly  - default is for a 128/512 MB ram system which wastes everybody's time
+3. Parallelise as much as possible - a lot of latency is introduced due to round trips 

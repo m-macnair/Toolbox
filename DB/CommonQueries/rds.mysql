@@ -1,0 +1,14 @@
+call mysql.rds_set_external_master(
+  '192.168.12.200',
+  3306,
+  '<user>',
+  '<pass>',
+  'bin.027665',
+  145478505,
+  1
+);
+
+CALL mysql.rds_stop_replication;
+CALL mysql.rds_start_replication;
+show slave status \G
+

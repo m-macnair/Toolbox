@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # ABSTRACT:
-our $VERSION = 'v0.0.1';
+our $VERSION = 'v0.0.2';
 
-##~ DIGEST : 0a842c7a43fe095742b16052fe2f80ec
+##~ DIGEST : 7463f586f8db747c1e530ae524821a31
 
 use strict;
 use warnings;
@@ -18,20 +18,18 @@ with qw/
   Moo::GenericRole::JSON
 
   Moo::GenericRole::DB
-  
+
   Moo::GenericRole::DB::MariaMysql
-  
 
   /;
 
 sub process {
 	my ( $self ) = @_;
-	
-	$self->set_dbh_from_def(  $self->json_load_file( $self->cfg->{db_def_file} ) );
 
-	
+	$self->set_dbh_from_def( $self->json_load_file( $self->cfg->{db_def_file} ) );
+
 	my $wanted = [ split( ',', $self->cfg->{column_string} ) ];
-	
+
 	my $map = $self->check_db_for_columns( $wanted );
 	$self->aref_to_csv( [ '#table', 'columns->' ], 'out.csv' );
 	for my $table ( sort ( keys( %{$map} ) ) ) {
@@ -57,7 +55,7 @@ sub main {
 		[],
 		{
 			required => {
-				db_def_file => 'json document with database connection details',
+				db_def_file   => 'json document with database connection details',
 				column_string => 'comma separated list of columns to find',
 
 			},

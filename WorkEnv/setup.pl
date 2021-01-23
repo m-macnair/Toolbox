@@ -1,6 +1,10 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+our $VERSION = 'v1.0.1';
+
+##~ DIGEST : a5582dd72c52472117fd3935edf0ceb8
+
 use Cwd;
 use File::Spec;
 use File::Find;
@@ -71,7 +75,7 @@ sub main {
 		my $pt = "$ENV{HOME}/.perltidyrc";
 
 		unless ( -e $pt ) {
-			my $tpt = "$tbdir/perl/perltidyrc";
+			my $tpt = "$tbdir/WorkEnv/Perl/perltidyrc";
 			if ( -e $tpt ) {
 				Cwd::abs_path();
 				my $linked = eval { symlink( $tpt, $pt ); 1 };
