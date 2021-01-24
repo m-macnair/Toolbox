@@ -1,3 +1,4 @@
+# ABSTRACT : 
 use strict;
 
 package Some::Module;
@@ -69,7 +70,7 @@ sub validate_some_value {
 =head1 ACKNOWLEDGEMENTS
 	TODO
 =head1 COPYRIGHT
- 	Copyright 2020 mmacnair.
+ 	Copyright 2021 mmacnair.
 =head1 LICENSE
 	TODO
 =cut
