@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+main(@ARGV);
+
+sub main {
+	my ($host_path) = @_;
+	my ($host,$path) = split(':',$host_path);
+	$path =~ s| |\\ |g;
+	my $cstring = qq|scp -r $host:"$path" ./| ;
+	print $cstring . $/;
+	system($cstring);
+}
