@@ -1,13 +1,27 @@
 #!/usr/bin/perl
+# ABSTRACT: escape paths correctly for SCP
+our $VERSION = 'v1.0.0';
+
+##~ DIGEST : f170a30f9a8284dfe4245983608cf810
 use strict;
 use warnings;
 main(@ARGV);
 
 sub main {
-	my ($host_path) = @_;
-	my ($host,$path) = split(':',$host_path);
-	$path =~ s| |\\ |g;
-	my $cstring = qq|scp -r $host:"$path" ./| ;
-	print $cstring . $/;
-	system($cstring);
+    my ($host_path) = @_;
+    my ( $host, $path ) = split( ':', $host_path );
+
+    #I expect there's a lib to do this, but for now~
+    $path =~ s| |\\ |g;
+    $path =~ s|\[|\\[|g;
+    $path =~ s|\(|\\(|g;
+    $path =~ s|\{|\\{|g;
+
+    $path =~ s|\]|\\]|g;
+    $path =~ s|\)|\\)|g;
+    $path =~ s|\}|\\}|g;
+
+    my $cstring = qq|scp -r $host:"$path" ./|;
+    print $cstring . $/;
+    system($cstring);
 }
