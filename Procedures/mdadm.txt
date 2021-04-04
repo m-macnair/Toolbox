@@ -1,0 +1,8 @@
+# the reason to mdadm partitions instead of disks is that it adds flexibility - firstly actual physical size differences between manufacturers, and then the option to create an array member from a larger disk 
+
+#zap create new partition table
+parted -s /dev/sdb mklabel gpt
+#create partition in partition table with wiggle room and correct alignment
+parted -a optimal /dev/sdc mkpart primary 0% 999GB
+
+mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sd[bc]1
