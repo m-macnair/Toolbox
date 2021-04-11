@@ -1,4 +1,4 @@
-# Script for detecting columns that should have indexes in mysql, and generating the sql statement if they don't
+# ABSTRACT: Given a list of keys and a database connection, go through each table 
 use strict;
 use warnings;
 use Toolbox::CombinedCLI;

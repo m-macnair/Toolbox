@@ -1,17 +1,22 @@
 #!/usr/bin/perl
 # ABSTRACT : A web page to sort files in the current directory
 
-our $VERSION = 'v1.0.3';
+our $VERSION = 'v1.0.4';
 
-##~ DIGEST : 915426f4070bb7e8507388dc32ffca8a
+##~ DIGEST : f406c2765fb51af1c4fc44a812cb9299
 use strict;
 
 use warnings;
-use lib '/home/m/git/Toolbox/perl/lib/';
+use lib qw{
+  /home/m/git/Toolbox-lib/lib/
+  /home/m/git/Moo-GenericRole/lib/
+
+};
 use CGI;
 use File::Find::Rule;
 
 use Toolbox::Class::JSDispatch;
+use Moo::GenericRole::FileSystem;
 use Toolbox::FileSystem;
 use JSON;
 use Data::Dumper;
@@ -19,6 +24,23 @@ use File::Path;
 use File::Copy;
 use Try::Tiny;
 use URI::Encode qw(uri_encode uri_decode);
+use List::Util qw(any);
+my $img_types = [
+	qw/
+	  jpg
+	  png
+	  gif
+	  jpeg
+	  webp
+	  /
+];
+my $video_types = [
+	qw/
+	  mp4
+	  webm
+
+	  /
+];
 
 main();
 
@@ -87,19 +109,39 @@ sub defaultaction {
 	my $keyhelperstring = join( '|', @keyhelperstack );
 	my $fileurl         = uri_encode( $file );
 
-	print qq|
-		<html>
-			<body style="background-color:black;height:100%;width:100%;">
-				<div style="color:white">
-				$keyhelperstring
-				</div>
-				<img src="$fileurl" style="min-height:90%;max-width:100%">
-				<script>
-				$ui
-				</script>
-			</body>
-		</html>
-	|;
+	my ( $name, $dir, $suffix ) = file_parse( $file );
+	if ( any { ".$_" eq $suffix } @{$video_types} ) {
+		print qq|
+			<html>
+				<body style="background-color:black;height:100%;width:100%;">
+					<div style="color:white">
+					$keyhelperstring
+					</div>
+					<video src="$fileurl" controls autoplay>
+						Your browser does not support the video tag.
+					</video> 
+					<script>
+					$ui
+					</script>
+				</body>
+			</html>
+		|;
+
+	} else {
+		print qq|
+			<html>
+				<body style="background-color:black;height:100%;width:100%;">
+					<div style="color:white">
+					$keyhelperstring
+					</div>
+					<img src="$fileurl" style="min-height:90%;max-width:100%">
+					<script>
+					$ui
+					</script>
+				</body>
+			</html>
+		|;
+	}
 
 }
 
@@ -189,17 +231,9 @@ sub _getfile {
 	opendir( DIR, $dir ) or die $!;
 	my @files = sort( readdir( DIR ) );
 	for my $file ( @files ) {
+		next unless $file =~ m{^[\s\w\d\W % _ \)\(. ]*$};
 		my ( $name, $path, $suffix ) = File::Basename::fileparse( $file, qr/\.[^.]*/ );
-		for my $ftype (
-			qw/
-			jpg
-			png
-			gif
-			jpeg
-
-			/
-		  )
-		{
+		for my $ftype ( @{$img_types}, @{$video_types} ) {
 			if ( lc( $suffix ) eq ".$ftype" ) {
 				$found = $file;
 				last;
@@ -228,4 +262,11 @@ sub _loadjsonfile {
 
 	return JSON::from_json( $jsonstring );
 
+}
+
+sub file_parse {
+	my ( $path ) = @_;
+	require File::Basename;
+	my ( $name, $dir, $suffix ) = File::Basename::fileparse( $path, qr/\.[^.]*/ );
+	return ( $name, $dir, $suffix );
 }

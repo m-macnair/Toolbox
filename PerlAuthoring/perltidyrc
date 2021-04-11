@@ -1,0 +1,24 @@
+#call this as perltidy <file> -pro=<this file>
+
+-pt=0  #( $yes, $no ) not ($yes,$no)
+-ce # if($yes){$/} not if($yes)$/{$/}
+-nola # required for tab indents
+-t # tabs used for indents
+
+-enc=utf8
+-bt=2 # use no space between a key and braces 
+
+--indent-block-comments
+-nolc # keep indentation for comments longer than line limit (even though there isn't one)
+
+#space to left and right of following tokens
+-wrs="= + - / * .= -= +="
+-wls="= + - / * .= -= +="
+
+-mbl=1 # maximum consecutive blank lines
+-nbot # don't break ternary operations
+
+-l=0 # Boundless lines
+--minimum-space-to-comment=1 #one space after the closing token in a comment
+--ignore-side-comment-lengths # no breaking for really long side comment lines
+-hsc

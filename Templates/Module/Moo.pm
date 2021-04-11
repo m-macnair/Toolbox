@@ -1,11 +1,7 @@
 # ABSTRACT : 
-use strict;
-
 package Some::Module;
-
-our $VERSION = 'v1.0.1';
-##~ DIGEST : 90859d4ad0cf0a89720c6f5ce38facf0
-
+our $VERSION = 'v0.0.1';
+use strict;
 use Moo;
 use 5.006;
 use warnings;
@@ -37,6 +33,13 @@ ACCESSORS: {
 }
 
 =head1 SUBROUTINES/METHODS
+=head2 LIFECYCLE SUBS
+=cut
+sub BUILD {
+	my ($self, $args) = @_;
+
+}
+
 =head2 PRIMARY SUBS
 	Main purpose of the module
 =head3

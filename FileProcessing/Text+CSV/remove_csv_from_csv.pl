@@ -15,7 +15,7 @@ with qw/
   Moo::GenericRole::FileIO
   Moo::GenericRole::FileIO::CSV
 
-  Moo::GenericRole::JSON
+  Moo::GenericRo
 
   /;
 use List::Util qw/any /;
@@ -23,10 +23,12 @@ use List::Util qw/any /;
 sub process {
 	my ( $self ) = @_;
 	my @masking_columns;
+	my $source_column = $self->cfg->{source_column} || 0;
+	my $target_column = $self->cfg->{target_column} || 0;
 	$self->sub_on_csv(
 		sub {
 			my ( $row ) = @_;
-			push( @masking_columns, $row->[ $self->cfg->{source_column} ] );
+			push( @masking_columns, $row->[ $source_column ] );
 		},
 		$self->cfg->{source_file}
 	);
@@ -34,10 +36,11 @@ sub process {
 	my $out_file = $self->cfg->{out_file} || "./remove_csv_from_csv_" . $self->iso_time_string . '.csv';
 	my $reject_file;
 
+
 	$self->sub_on_csv(
 		sub {
 			my ( $row ) = @_;
-			my $v = $row->[ $self->cfg->{target_column} ];
+			my $v = $row->[ $target_column ];
 
 			if ( any { $v eq $_ } @masking_columns ) {
 				if ( $self->cfg->{reject_file} ) {
@@ -65,24 +68,25 @@ sub main {
 			qw/
 			  source_file
 			  target_file
-			  source_column
-			  target_column
+
 			  /
 		],
 		[
 			qw/
+				source_column
+			  target_column
 
 			  out_file
 			  /
 		],
 		{
-			required => {},
-			optional => {
+			required => {
 				source_file   => 'File with columns to mask in target file',
 				target_file   => 'File with columns to mask',
-				source_column => 'Column from source_file to mask',
-				target_column => 'Column in target_file to be masked',
-
+			},
+			optional => {
+				source_column => 'Column from source_file to mask (default 0)',
+				target_column => 'Column in target_file to be masked (default 0)',
 			},
 			optional => {
 				out_file    => "Explicit output file name; defaults to remove_csv_from_csv_<isotime>.csv",

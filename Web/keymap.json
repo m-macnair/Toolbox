@@ -1,10 +1,11 @@
 {
 	"replace":{
-		"%url":"./sort.pl?action=move&"
+		"%url":"./sortmk2.pl?action=move&"
 	},
 	"map":{
 		"1":"%urltarget=neat",
 		"2":"%urltarget=funny",
+		"8":"%urltarget=delete",
 		"9":"%urltarget=select",
 		"0":"%urltarget=skip"
 	}

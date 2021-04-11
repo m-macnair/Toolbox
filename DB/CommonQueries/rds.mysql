@@ -12,3 +12,50 @@ CALL mysql.rds_stop_replication;
 CALL mysql.rds_start_replication;
 show slave status \G
 
+call mysql.rds_skip_repl_error;
+
+CALL mysql.rds_set_configuration('binlog retention hours', 1000);
+
+
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+call mysql.rds_skip_repl_error;
+CALL mysql.rds_start_replication;

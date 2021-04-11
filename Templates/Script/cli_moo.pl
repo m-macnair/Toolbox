@@ -11,7 +11,7 @@ package Obj;
 use Moo;
 use parent 'Moo::GenericRoleClass::CLI'; #provides  CLI, FileSystem, Common
 with qw/
-  Moo::GenericRole::FileSystem
+
   Moo::GenericRole::FileIO
   Moo::GenericRole::FileIO::CSV
 

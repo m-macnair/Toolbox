@@ -75,7 +75,8 @@ sub main {
 		my $pt = "$ENV{HOME}/.perltidyrc";
 
 		unless ( -e $pt ) {
-			my $tpt = "$tbdir/WorkEnv/Perl/perltidyrc";
+			#my perltidy 
+			my $tpt = "$tbdir/PerlAuthoring/perltidyrc";
 			if ( -e $tpt ) {
 				Cwd::abs_path();
 				my $linked = eval { symlink( $tpt, $pt ); 1 };
