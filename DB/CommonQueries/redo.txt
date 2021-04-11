@@ -1,0 +1,12 @@
+shortkeys
+backoffice_portfolio_notes
+backoffice_auditlog_hbc
+backoffice_tradeaccount_hiddeninvoices
+backoffice_tradeaccount_invoices;
+backoffice_tradeaccount_invoiceschedules
+fusion_itinerarycodes
+fusion_itineraries
+fusion_customer_quotes
+fusion_customer_searches
+fusion_customer_searchdetail
+healthcheck_checkin
