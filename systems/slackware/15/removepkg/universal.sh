@@ -4,4 +4,4 @@
 #A
 removepkg aalib adwaita akregator alkimia amp
 #B
-removepkg blinken blueman bluedevil
+removepkg blinken blueman bluedevil bomber bovo

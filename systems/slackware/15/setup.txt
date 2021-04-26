@@ -1,0 +1,7 @@
+download slpkg
+add alien to repos
+slpkg update
+
+
+Libreoffice>
+	Kress doesn't play nice with hardware acceleration - libreoffice --safe-mode and disable, then restart applying changes
