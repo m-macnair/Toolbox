@@ -3,6 +3,7 @@
 
 `git config --global credential.helper cache`;
 `git config --global credential.helper 'cache --timeout=36000'`;
+`touch /home/$ENV{USER}/.git-credential-cache`;
 `chmod 0700 /home/$ENV{USER}/.git-credential-cache`;
 
 `git config --global core.editor "vi "`;
