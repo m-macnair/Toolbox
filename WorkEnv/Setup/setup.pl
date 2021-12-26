@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-our $VERSION = 'v1.0.2';
+our $VERSION = 'v1.0.3';
 
-##~ DIGEST : a0f0f233adf3cf056da450438cd97dfe
+##~ DIGEST : 03a23522b3f5b02520d6514e0881bfb1
 
 use Cwd;
 use File::Spec;
@@ -22,6 +22,9 @@ sub main {
 	#parent directory of this file's parent directory's parent directory
 	my $toolbox_dir = Cwd::abs_path( dirname( $work_env_dir ) );
 
+	#~/gits in most cases
+	my $gits_dir = Cwd::abs_path( dirname( $toolbox_dir ) );
+
 	my @perllibs;
 
 	GIT: {
@@ -31,8 +34,8 @@ sub main {
 		`chmod 0700 /home/$ENV{USER}/.git-credential-cache`;
 
 		#clone my stuff and get ready to push the lib directory into the user's perl library stack
-		push( @perllibs, get_repo_lib( $toolbox_dir, 'https://github.com/m-macnair/Toolbox-lib.git',     'Toolbox-lib' ) );
-		push( @perllibs, get_repo_lib( $toolbox_dir, 'https://github.com/m-macnair/Moo-GenericRole.git', 'Moo-GenericRole' ) );
+		push( @perllibs, get_repo_lib( $gits_dir, 'https://github.com/m-macnair/Toolbox-lib.git',     'Toolbox-lib' ) );
+		push( @perllibs, get_repo_lib( $gits_dir, 'https://github.com/m-macnair/Moo-GenericRole.git', 'Moo-GenericRole' ) );
 
 	}
 
@@ -91,7 +94,7 @@ sub main {
 	}
 
 	KDE: {
-
+		# I have by now forgot what this does
 		if ( -e "$ENV{HOME}/.kde/share/apps/konsole/" ) {
 			KONSOLE: {
 				File::Find::find(
@@ -123,14 +126,15 @@ sub add_unless {
 }
 
 sub get_repo_lib {
-	my ( $toolbox_dir, $url, $name ) = @_;
-	unless ( -e "$toolbox_dir/$name" ) {
-		`git clone $url $toolbox_dir/$name`;
+	my ( $gits_dir, $url, $name ) = @_;
+	unless ( -e "$gits_dir/$name" ) {
+		`git clone $url $gits_dir/$name`;
 	}
-	my $lib_path = "$toolbox_dir/$name/lib/";
+	my $lib_path = "$gits_dir/$name/lib/";
 	unless ( -e $lib_path ) {
 		die "Library path for $url [$lib_path] not found";
 	}
+
 	return $lib_path;
 }
 
