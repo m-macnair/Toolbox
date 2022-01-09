@@ -5,3 +5,4 @@ apt-get update --assume-yes
 apt-get upgrade --assume-yes
 apt-get install --assume-yes screen build-essential iptables git net-tools screen sudo  htop rsync perl ntpdate >> ~/apt_install.log
 bash $TOOLBOXDIR/systems/cpan_universal.sh
+echo "/sbin/ is not added to path by default - ifconfig and several friends are to be found here!";
