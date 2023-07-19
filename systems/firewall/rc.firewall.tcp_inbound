@@ -1,7 +1,0 @@
-$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port 80 -j ACCEPT
-# HTTPs
-$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port 443 -j ACCEPT
-# sshd
-$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port 22 -j ACCEPT
-# Terraria
-$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port 7777 -j ACCEPT

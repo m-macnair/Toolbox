@@ -1,3 +1,6 @@
+#!/bin/bash
+#EDIT THIS FILE FOR THE SYSTEM IN QUESTION!!!
+
 echo -n "Loading commands and interfaces "
 SYSCTL="/sbin/sysctl -w" 
 ### slackware

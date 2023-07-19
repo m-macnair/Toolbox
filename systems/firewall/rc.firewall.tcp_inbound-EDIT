@@ -1,0 +1,52 @@
+#!/bin/bash
+_FIREWALLROOT="$(dirname ./)"
+source $_FIREWALLROOT/rc.firewall.conf
+
+$IPT -F tcp_inbound
+white=( )
+for port in "${white[@]}"
+do
+	echo "white listing port $port"
+	$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port $port -j ACCEPT
+done
+
+log_white=(30303 )
+for port in "${log_white[@]}"
+do
+	echo "Log + white listing port $port"
+	name="tcp_in_white_$port"
+	$IPT -F $name
+	$IPT -X $name
+	$IPT -N $name
+	$IPT -A $name -j LOG --log-prefix "$name:"
+	$IPT -A $name -j ACCEPT
+	$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port $port -j $name
+done
+
+
+log_black=(22)
+for port in "${log_black[@]}"
+do
+	echo "Log + black listing port $port"
+	name="tcp_in_black_$port"
+	$IPT -F $name
+	$IPT -X $name
+	$IPT -N $name
+	$IPT -A $name -j LOG --log-prefix "$name:"
+	$IPT -A $name -j DROP
+	$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port $port -j $name
+done
+
+black=()
+for port in "${black[@]}"
+do
+	echo "black listing port $port"
+	$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port $port -j DROP
+done
+
+
+if [ 1 ]
+then
+	echo "Applying general blacklist to TCP Inbound Connections"
+	$IPT -A tcp_inbound -p TCP -s 0/0 -j DROP
+fi	

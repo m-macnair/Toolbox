@@ -1,0 +1,16 @@
+#!/bin/bash
+_FIREWALLROOT="$(dirname ./)"
+source $_FIREWALLROOT/rc.firewall.conf
+
+$IPT -F tcp_outbound
+
+#create logging chain for outbound ssh connections which should not be a thing 
+$IPT -F ssh_outbound_drop
+$IPT -X ssh_outbound_drop
+$IPT -N ssh_outbound_drop
+
+$IPT -A ssh_outbound_drop -j LOG --log-prefix "ssh_outbound_drop:"
+$IPT -A ssh_outbound_drop -j DROP
+
+#send to the above
+$IPT -A tcp_outbound -p TCP -s 0/0 --destination-port 22 -j ssh_outbound_drop
