@@ -1,7 +1,7 @@
 use strict;
 use warnings;
-our $VERSION = 'v1.0.16';
-##~ DIGEST : f78bc019f845214f4fbc8471e2df79e8
+our $VERSION = 'v1.0.17';
+##~ DIGEST : 6a8349d4c0344675ea14c2b62a7f6e42
 #IG trading platform API trial
 package IGAPI;
 use Moo;
@@ -34,7 +34,7 @@ ACCESSORS: {
 	}
 	AUDIT: {
 		has auditroot => ( is => 'rw' );
-		has auditdir  => (
+		has auditdir => (
 			is   => 'ro', # this should never change after creation surely? :thinkingface:
 			lazy => 1,
 
@@ -226,8 +226,8 @@ sub order {
 	my $orderbody = {
 		currencyCode  => $p->{currency}      || $self->currency(),
 		dealReference => $p->{dealReference} || $self->snakeuuid(),
-		timeInForce => ( $p->{timeInForce} ? $p->{timeInForce} : 'GOOD_TILL_CANCELLED' ),
-		type        => ( $p->{type} && $p->{type} eq 'STOP' ) ? 'STOP' : 'LIMIT'
+		timeInForce   => ( $p->{timeInForce} ? $p->{timeInForce} : 'GOOD_TILL_CANCELLED' ),
+		type          => ( $p->{type} && $p->{type} eq 'STOP' ) ? 'STOP' : 'LIMIT'
 	};
 	REQUIRED: {
 		for my $required (

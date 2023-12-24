@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # ABSTRACT:
-our $VERSION = 'v0.0.1';
+our $VERSION = 'v0.0.2';
 
-##~ DIGEST : 8831af4301198dea1cfc67f0065bda7d
+##~ DIGEST : 3c9e324bdeb24d5ef48746b478d56078
 
 use strict;
 use warnings;
@@ -24,7 +24,7 @@ sub process {
 	die "String not provided" unless $string;
 	for my $path ( @{$paths} ) {
 		die "Path not provided" unless $path;
-		return unless -f $path;
+		return                  unless -f $path;
 		$self->check_file( $path, "File to process" );
 		if ( index( $path, $string ) != -1 ) {
 			my ( $file_path, $dir ) = $self->file_path_parts( $path );

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # ABSTRACT: Given a db def, get every column name in a database
-our $VERSION = 'v0.0.4';
-##~ DIGEST : 0843384596c21cd6c1ce04fd09f0206c
+our $VERSION = 'v0.0.5';
+##~ DIGEST : 397a11f9da55f6746556285387a51c14
 use strict;
 use warnings;
 
@@ -20,24 +20,24 @@ with qw/
 
 sub process {
 
-	my ($self) = @_;
+	my ( $self ) = @_;
 	$self->set_dbh_from_def( $self->json_load_file( $self->cfg->{db_def_file} ) );
-	my $columns ={};
-	for my $table ( @{ $self->dbh->selectcol_arrayref("show tables") } ) {
+	my $columns = {};
+	for my $table ( @{$self->dbh->selectcol_arrayref( "show tables" )} ) {
 		$self->sub_on_describe_table(
 			sub {
-				my ($row) = @_;
-				$columns->{ $row->{Field} }++;
+				my ( $row ) = @_;
+				$columns->{$row->{Field}}++;
 				return 1;
 			},
 			$table
 		);
 
 	}
-			my $out_file = $self->cfg->{out_file} || 'column_count.csv';
-		for my $key ( sort ( keys ( %{$columns} ) ) ) {
-			$self->aref_to_csv( [$key, $columns->{$key}],$out_file );
-		}
+	my $out_file = $self->cfg->{out_file} || 'column_count.csv';
+	for my $key ( sort ( keys( %{$columns} ) ) ) {
+		$self->aref_to_csv( [ $key, $columns->{$key} ], $out_file );
+	}
 
 }
 1;
@@ -48,7 +48,8 @@ main();
 sub main {
 
 	my $self = Obj->new();
-	$self->get_config( [
+	$self->get_config(
+		[
 			qw/
 			  db_def_file
 			  /,

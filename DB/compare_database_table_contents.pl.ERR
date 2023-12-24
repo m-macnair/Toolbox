@@ -1,8 +1,0 @@
-Perltidy version is 20200110
-
-compare_database_table_contents.pl: Begin Error Output Stream
-
-There is no previous '(' to match a ')' on line 59
-59: unless ($master_row->[0] == $subject_row->[0])){
-                                                  ^
-95: To save a full .LOG file rerun with -g

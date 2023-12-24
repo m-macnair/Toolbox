@@ -1,0 +1,22 @@
+# deb cdrom:[Devuan GNU/Linux 4.0 chimaera amd64 - desktop 20211012]/ chimaera contrib main non-free
+
+
+# Line commented out by installer because it failed to verify:
+deb http://pkgmaster.devuan.org/merged chimaera-security main contrib non-free
+# Line commented out by installer because it failed to verify:
+deb-src http://pkgmaster.devuan.org/merged chimaera-security main contrib non-free
+
+
+
+# chimaera-updates, to get updates before a point release is made;
+# see https://www.debian.org/doc/manuals/debian-reference/ch02.en.html#_updates_and_backports
+# A network mirror was not selected during install.  The following entries
+# are provided as examples, but you should amend them as appropriate
+# for your mirror of choice.
+#
+deb http://deb.devuan.org/merged chimaera main
+deb http://deb.devuan.org/merged chimaera-updates main
+deb http://deb.devuan.org/merged chimaera-security main
+
+
+deb-src http://deb.devuan.org/merged chimaera-updates main contrib non-free

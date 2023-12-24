@@ -8,15 +8,22 @@ gpg -a --export-secret-keys >pri_keys.asc
 # copy above to target machine 
 
 #on target machine
-gpg --edit-key <key name>
+gpg --import pri_keys.asc
+gpg --import pub_keys.asc
+gpg -K
+gpg --edit-key <key hash>
 #> trust
 #> 5
 #> quit
+
+
+
 
 pass init <key name>
 
 pass git init
 pass git remote add origin </home/m/git-repo/PassStore.git>
-pass git pull origin master --allow-unrelated-histories
+pass git fetch
 pass git reset --hard
+
 pass git branch --set-upstream-to=origin/master master

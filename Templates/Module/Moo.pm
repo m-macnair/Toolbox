@@ -1,6 +1,8 @@
-# ABSTRACT : 
+# ABSTRACT :
 package Some::Module;
-our $VERSION = 'v0.0.1';
+our $VERSION = 'v0.0.2';
+
+##~ DIGEST : b3fb2d62e76e748ad99662538395288e
 use strict;
 use Moo;
 use 5.006;
@@ -35,8 +37,9 @@ ACCESSORS: {
 =head1 SUBROUTINES/METHODS
 =head2 LIFECYCLE SUBS
 =cut
+
 sub BUILD {
-	my ($self, $args) = @_;
+	my ( $self, $args ) = @_;
 
 }
 

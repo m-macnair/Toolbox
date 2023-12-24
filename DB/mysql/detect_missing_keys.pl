@@ -19,7 +19,7 @@ sub main {
 		],
 		[
 			qw/
-			  /
+			/
 		]
 	);
 	Toolbox::FileSystem::checkfile( $c->{columnfile} );

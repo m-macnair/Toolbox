@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # ABSTRACT:
-our $VERSION = 'v0.0.3';
-##~ DIGEST : 2bb6cf4b972c99a51a0a218a16ef9cc1
+our $VERSION = 'v0.0.4';
+##~ DIGEST : 6174809534794d51e7706e4b314cfa17
 use strict;
 use warnings;
 
@@ -46,7 +46,7 @@ sub main {
 		],
 		[
 			qw/
-			  /
+			/
 		],
 		{
 			required => {

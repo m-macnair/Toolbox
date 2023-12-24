@@ -10,7 +10,7 @@ main( @ARGV );
 sub main {
 
 	my ( $dir ) = @_;
-	die "No directory provided!" unless $dir;
+	die "No directory provided!"     unless $dir;
 	die "Directory [$dir] not found" unless -d $dir;
 	my @pmlist = File::Find::Rule->file()->name( "*.pm" )->in( $dir );
 	my $submap = {};

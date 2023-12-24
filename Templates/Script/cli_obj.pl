@@ -23,7 +23,7 @@ sub main {
 		[
 			qw/
 
-			  /
+			/
 		]
 	);
 	my $obj = Object->new();

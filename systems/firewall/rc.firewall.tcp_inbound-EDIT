@@ -2,6 +2,7 @@
 _FIREWALLROOT="$(dirname ./)"
 source $_FIREWALLROOT/rc.firewall.conf
 
+
 $IPT -F tcp_inbound
 white=( )
 for port in "${white[@]}"
@@ -10,12 +11,36 @@ do
 	$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port $port -j ACCEPT
 done
 
-log_white=(30303 )
-for port in "${log_white[@]}"
+
+# host white lists 
+host_whitelist=(
+
+)
+name="in_host_wl"
+$IPT -X $name
+$IPT -N $name
+
+for host in "${host_whitelist[@]}"
+do
+	$IPT -A $name -s "$host/32" -j ACCEPT
+done
+$IPT -A tcp_inbound -p TCP -j $name
+
+name="in_host_dynamic_wl"
+$IPT -F $name
+$IPT -X $name
+$IPT -N $name
+$IPT -A in_host_wl -j name
+
+
+
+#logged port white list 
+port_log_whitelist=(30303 )
+for port in "${port_log_whitelist[@]}"
 do
 	echo "Log + white listing port $port"
-	name="tcp_in_white_$port"
-	$IPT -F $name
+	name="tcp_port_in_log_white_$port"
+	
 	$IPT -X $name
 	$IPT -N $name
 	$IPT -A $name -j LOG --log-prefix "$name:"
@@ -24,11 +49,13 @@ do
 done
 
 
-log_black=(22)
-for port in "${log_black[@]}"
+
+#logged port black list 
+port_log_blacklist=(22)
+for port in "${port_log_blacklist[@]}"
 do
 	echo "Log + black listing port $port"
-	name="tcp_in_black_$port"
+	name="tcp_port_in_log_black_$port"
 	$IPT -F $name
 	$IPT -X $name
 	$IPT -N $name
@@ -43,6 +70,9 @@ do
 	echo "black listing port $port"
 	$IPT -A tcp_inbound -p TCP -s 0/0 --destination-port $port -j DROP
 done
+
+
+
 
 
 if [ 1 ]

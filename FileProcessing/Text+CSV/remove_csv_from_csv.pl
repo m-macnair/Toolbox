@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # ABSTRACT: given two columns and two csv files, remove the instances where column $x cells from file A are in column $y cells in file B
-our $VERSION = 'v0.0.2';
+our $VERSION = 'v0.0.3';
 
-##~ DIGEST : 65e787649caa466829e5b6b57662644e
+##~ DIGEST : 8da9b4f4c0b50e415d0c101e44ce2482
 
 use strict;
 use warnings;
@@ -28,7 +28,7 @@ sub process {
 	$self->sub_on_csv(
 		sub {
 			my ( $row ) = @_;
-			push( @masking_columns, $row->[ $source_column ] );
+			push( @masking_columns, $row->[$source_column] );
 		},
 		$self->cfg->{source_file}
 	);
@@ -36,11 +36,10 @@ sub process {
 	my $out_file = $self->cfg->{out_file} || "./remove_csv_from_csv_" . $self->iso_time_string . '.csv';
 	my $reject_file;
 
-
 	$self->sub_on_csv(
 		sub {
 			my ( $row ) = @_;
-			my $v = $row->[ $target_column ];
+			my $v = $row->[$target_column];
 
 			if ( any { $v eq $_ } @masking_columns ) {
 				if ( $self->cfg->{reject_file} ) {
@@ -73,7 +72,7 @@ sub main {
 		],
 		[
 			qw/
-				source_column
+			  source_column
 			  target_column
 
 			  out_file
@@ -81,8 +80,8 @@ sub main {
 		],
 		{
 			required => {
-				source_file   => 'File with columns to mask in target file',
-				target_file   => 'File with columns to mask',
+				source_file => 'File with columns to mask in target file',
+				target_file => 'File with columns to mask',
 			},
 			optional => {
 				source_column => 'Column from source_file to mask (default 0)',

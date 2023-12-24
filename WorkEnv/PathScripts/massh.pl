@@ -17,8 +17,8 @@ sub main() {
 	precheck();
 	my $commandlist = promptforfile( 'Enter command list file', [qw# ./commandlist.csv ./mash_commands.csv#] );
 	my $hostlist    = promptforfile( 'Enter host file',         [qw# ./hostlist.csv ./mash_hosts.csv #] );
-	my $user = prompt( 'enter user', $ENV{USER} );
-	my $pass = prompt( 'enter pass', undef, {hidden => 1} );
+	my $user        = prompt( 'enter user', $ENV{USER} );
+	my $pass        = prompt( 'enter pass', undef, {hidden => 1} );
 
 	#Actual Work
 	my $pssh = Net::OpenSSH::Parallel->new( reconnections => 2, );

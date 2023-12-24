@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # ABSTRACT: distribute each line in a file round robin over $n files
-our $VERSION = 'v0.0.2';
+our $VERSION = 'v0.0.3';
 
-##~ DIGEST : f1b0c254076501756a89ac009416e540
+##~ DIGEST : 190ba49e45b634143aaa10e1dde136a3
 
 use strict;
 use warnings;
@@ -57,7 +57,7 @@ sub main {
 		[
 			qw/
 
-			  /
+			/
 		],
 		{
 			required => {

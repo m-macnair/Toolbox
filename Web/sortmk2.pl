@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 # ABSTRACT : A web page to sort files in the current directory
 
-our $VERSION = 'v1.0.4';
+our $VERSION = 'v1.0.5';
 
-##~ DIGEST : f406c2765fb51af1c4fc44a812cb9299
+##~ DIGEST : b6468313287b5d5eb152e4711d9bda2a
 use strict;
 
 use warnings;

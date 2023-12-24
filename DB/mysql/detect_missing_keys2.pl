@@ -1,4 +1,4 @@
-# ABSTRACT: Given a list of keys and a database connection, go through each table 
+# ABSTRACT: Given a list of keys and a database connection, go through each table
 use strict;
 use warnings;
 use Toolbox::CombinedCLI;
@@ -19,7 +19,7 @@ sub main {
 		[
 			qw/
 
-			  /
+			/
 		]
 	);
 	Toolbox::FileSystem::checkfile( $c->{columnfile} );

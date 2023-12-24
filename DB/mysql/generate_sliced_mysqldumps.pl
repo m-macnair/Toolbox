@@ -84,7 +84,7 @@ sub process_table {
 		$dumpstring_where = " and $where";
 	}
 	unless ( index( $where, 'where' ) != -1 ) { $where = "where $where" if $where }
-	if ( @{$self->check_table_for_columns( $table, ['id'] )} ) {
+	if     ( @{$self->check_table_for_columns( $table, ['id'] )} ) {
 		my ( $max ) = $self->dbh->selectrow_array( "select max(id) from `$table` $where " );
 		my ( $min ) = $self->dbh->selectrow_array( "select min(id) from `$table` $where " );
 		for ( my $lower = $min ; $lower <= $max ; $lower += $self->slice_size() ) {
