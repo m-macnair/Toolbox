@@ -1,0 +1,12 @@
+
+#Rsync allows for many features that, when moving large collections of files, make it highly preferable to cp
+
+
+rsync -av --remove-source-files /path/to/source /path/to/destination
+
+-a preserves the directory structure, permissions, and timestamps.
+-v enables verbose output to see the progress of the transfer.
+--remove-source-files removes the source files after a successful transfer.
+
+https://stackoverflow.com/questions/13778889/rsync-difference-between-size-only-and-ignore-times
+

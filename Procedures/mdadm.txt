@@ -2,7 +2,25 @@
 
 #zap create new partition table
 parted -s /dev/sdb mklabel gpt
-#create partition in partition table with wiggle room and correct alignment
-parted -a optimal /dev/sdc mkpart primary 0% 999GB
+parted -s /dev/sdc mklabel gpt
+parted -s /dev/sdd mklabel gpt
+parted -s /dev/sde mklabel gpt
 
-mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sd[bc]1
+
+#create partition in partition table with wiggle room and correct alignment
+parted -a optimal /dev/sdb mkpart primary 0% 100%
+parted -a optimal /dev/sdc mkpart primary 0% 100%
+parted -a optimal /dev/sdd mkpart primary 0% 100%
+parted -a optimal /dev/sde mkpart primary 0% 100%
+
+
+#create the mdadm array itself 
+mdadm --create /dev/md0  /dev/sd[bcd]1  --level=5 --raid-devices=3 
+
+
+#view the resulting array 
+mdadm -D /dev/md0
+
+
+#monitor progress of array assembly
+cat /proc/mdstat
