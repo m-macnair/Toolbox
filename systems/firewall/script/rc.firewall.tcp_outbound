@@ -1,0 +1,21 @@
+#!/bin/bash
+_FIREWALLROOT="$(dirname ./)"
+source $_FIREWALLROOT/conf/rc.firewall.conf
+
+$IPT -F tcp_outbound
+
+#create logging chain for explicitely forbidden (e.g. ssh) connections which should not be a thing 
+$IPT -F ssh_outbound_drop
+$IPT -X ssh_outbound_drop
+$IPT -N ssh_outbound_drop
+
+$IPT -A ssh_outbound_drop -j LOG --log-prefix "ssh_outbound_drop:" --log-level 4
+$IPT -A ssh_outbound_drop -j DROP
+
+#send to the above
+for port in "${port_log_blacklist[@]}"
+do
+	$IPT -A tcp_outbound -p TCP -s 0/0 --destination-port $port -j ssh_outbound_drop
+done
+
+

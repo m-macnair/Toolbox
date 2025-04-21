@@ -1,0 +1,144 @@
+#!/bin/bash
+_FIREWALLROOT="$(dirname ./)"
+source $_FIREWALLROOT/conf/firewall.conf
+source $_FIREWALLROOT/conf/blacklist.conf
+echo "Processing Blacklist..."
+
+#logged port black list 
+echo "Log + black listing ports"
+name="in_port_logged_bl"
+init_chain "$name"
+for port in "${in_port_logged_bl[@]}"
+do
+	$IPT -A $name -j LOG --log-prefix "$name:"
+	$IPT -A $name -j DROP
+done
+$IPT -I tcp_inbound  -j "$name"
+#logged host black list 
+
+
+echo "Log + black listing hosts"
+name="in_host_logged_bl"
+init_chain "$name"
+for host in "${in_host_logged_bl[@]}"
+do
+	$IPT -A $name -j LOG --log-prefix "$name:"
+	$IPT -I $name -s "$host/32" -j DROP
+done
+$IPT -I tcp_inbound  -j "$name"
+
+
+echo "Log + black listing outbound ports"
+name="out_port_logged_bl"
+init_chain "$name"
+for host in "${out_port_logged_bl[@]}"
+do
+	$IPT -A $name -j LOG --log-prefix "$name:"
+	$IPT -A $name -j DROP
+done
+$IPT -I tcp_outbound  -j "$name"
+
+
+echo "National Blacklists"
+#national blacklist
+name="national_blacklist"
+init_chain "$name"
+china=(
+	"112.0.0.0/10"
+	"39.128.0.0/10"
+	"111.0.0.0/10"
+	"116.128.0.0/10"
+	"117.128.0.0/10"
+	"183.0.0.0/10"
+	"36.128.0.0/10"
+	"183.192.0.0/10"
+	"59.192.0.0/10"
+
+	"112.224.0.0/11"
+	"113.64.0.0/11"
+	"36.96.0.0/11"
+	"180.96.0.0/11"
+	"175.64.0.0/11"
+	"111.128.0.0/11"
+	"220.160.0.0/11"
+	"223.64.0.0/11"
+	"123.64.0.0/11"
+	"36.192.0.0/11"
+	"39.64.0.0/11"
+	"110.192.0.0/11"
+	"183.128.0.0/11"
+	"49.64.0.0/11"
+	"47.96.0.0/11"
+	"122.64.0.0/11"
+	"110.96.0.0/11"
+	"27.192.0.0/11"
+	"115.192.0.0/11"
+	"222.32.0.0/11"
+
+	"171.208.0.0/12"
+	"116.224.0.0/12"
+	"114.224.0.0/12"
+	"36.16.0.0/12"
+	"115.48.0.0/12"
+	"115.224.0.0/12"
+	"116.16.0.0/12"
+	"119.128.0.0/12"
+	"60.176.0.0/12"
+	"223.144.0.0/12"
+	"114.240.0.0/12"
+	"122.224.0.0/12"
+	"42.160.0.0/12"
+	"182.96.0.0/12"
+	"182.128.0.0/12"
+	"182.112.0.0/12"
+	"42.208.0.0/12"
+	"182.32.0.0/12"
+	"42.224.0.0/12"
+	"219.128.0.0/12"
+	"43.176.0.0/12"
+	"175.160.0.0/12"
+	"223.96.0.0/12"
+	"175.48.0.0/12"
+	"175.0.0.0/12"
+	"117.80.0.0/12"
+	"180.160.0.0/12"
+	"42.128.0.0/12"
+	"121.224.0.0/12"
+	"123.112.0.0/12"
+	"58.208.0.0/12"
+	"119.176.0.0/12"
+	"101.80.0.0/12"
+	"125.112.0.0/12"
+	"14.144.0.0/12"
+	"101.144.0.0/12"
+	"14.208.0.0/12"
+	"106.224.0.0/12"
+	"27.16.0.0/12"
+	"14.112.0.0/12"
+	"111.192.0.0/12"
+	"110.240.0.0/12"
+	"106.32.0.0/12"
+	"106.16.0.0/12"
+	"113.224.0.0/12"
+	"101.16.0.0/12"
+	"106.80.0.0/12"
+	"120.0.0.0/12"
+	"113.96.0.0/12"
+	"114.80.0.0/12"
+	"14.16.0.0/12"
+)
+
+russia=(
+
+)
+
+for network in "${china[@]}"
+do
+	$IPT -I $name -s "$network" -j DROP
+done
+for network in "${russia[@]}"
+do
+	$IPT -I $name -s "$network" -j DROP
+done
+
+$IPT -I INPUT  -j "$name"

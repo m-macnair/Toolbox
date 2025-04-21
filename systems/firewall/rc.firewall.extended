@@ -1,0 +1,2 @@
+#!/bin/bash
+./rc.firewall && ./script/rc.whitelist && ./script/rc.blacklist && /usr/sbin/iptables -L -n

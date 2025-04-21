@@ -1,0 +1,28 @@
+#!/bin/bash
+_FIREWALLROOT="$(dirname ./)"
+source $_FIREWALLROOT/conf/firewall.conf
+source $_FIREWALLROOT/conf/whitelist.conf
+echo "Processing Whitelist..."
+
+
+name="in_port_wl"
+init_chain "$name";
+for port in "${in_port_wl[@]}"
+do
+	echo "white listing port $port"
+	$IPT -I $name -p TCP -s 0/0 --destination-port $port -j ACCEPT
+done
+
+$IPT -I tcp_inbound  -j "$name"
+
+
+# host white lists 
+name="in_host_wl"
+init_chain "$name";
+
+for host in "${in_host_wl[@]}"
+do
+	echo "white listing host $host"
+	$IPT -I $name -s "$host/32" -j ACCEPT
+done
+$IPT -I tcp_inbound -j "$name"
