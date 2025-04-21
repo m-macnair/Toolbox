@@ -1,2 +1,2 @@
 #!/bin/bash
-./rc.firewall.extended &&  sleep 5 && sudo iptables -F 
+./rc.firewall.extended &&  sleep 15 && sudo ./rc.firewall stop 

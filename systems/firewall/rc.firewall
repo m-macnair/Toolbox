@@ -154,7 +154,7 @@ $IPT -A tcp_inbound -j RETURN
 
 # outbound defaults - required to actually do anything
 $IPT -A tcp_outbound -p TCP -s 0/0 -j ACCEPT
-$IPT -A tcp_outbound RETURN
+$IPT -A tcp_outbound -j RETURN
 
 echo "Process INPUT chain ..."
 # Allow all on localhost interface
