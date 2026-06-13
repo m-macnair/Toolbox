@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-our $VERSION = 'v1.0.6';
+our $VERSION = 'v1.0.7';
 
-##~ DIGEST : 6e2be5d2a11fc73b47c11567311cc585
+##~ DIGEST : b59c35bdb25253025eec9e381770495d
 
 use File::Find;
 use File::Basename;
@@ -29,7 +29,9 @@ sub wanted {
 for my $path ( sort( @stack ) ) {
 
 	my ( $name, $dir, $suffix ) = fileparse( $path, qr/\.[^.]*/ );
-	my $new_name = sprintf( '%04d_%s%s', $counter, $name, $suffix );
+	my $short_name = $name;
+	$short_name =~ s/^(?:\d{4}_)+//;
+	my $new_name = sprintf( '%04d_%s%s', $counter, $short_name, $suffix );
 	my $new_path = File::Spec->catfile( $dir, $new_name );
 
 	if ( -e $new_path ) {

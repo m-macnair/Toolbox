@@ -10,7 +10,7 @@ use warnings;
 package Obj;
 use Moo;
 use parent 'Moo::GenericRoleClass::CLI'; #provides  CLI, FileSystem, Common
-with qw//;
+#with qw//;
 
 sub process {
 	my ( $self, $path ) = @_;
