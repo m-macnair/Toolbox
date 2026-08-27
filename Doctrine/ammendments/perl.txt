@@ -1,0 +1,3 @@
+anonymous subs MAY be used within loops, processes and so on, this process is encouraged.
+they SHOULD+ return a true value when resolving normally and undef on failure or otherwise a stop condition
+stacks of variables SHOULD have # breaks after every four, or be arranged in lines with 4 entries
